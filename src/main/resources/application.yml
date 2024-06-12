@@ -15,3 +15,6 @@ spring:
 #    bootstrap-servers: localhost:9092
 #    producer:
 #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+token:
+  secret: secretKeyHere
+  expiration: 1000
