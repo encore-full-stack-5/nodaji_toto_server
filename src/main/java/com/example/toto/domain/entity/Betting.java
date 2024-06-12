@@ -22,7 +22,7 @@ public class Betting {
     @Column(name = "USER_ID")
     private UUID userId;
 
-    @Column(name = "USER_ID")
+    @Column(name = "GAME_ID")
     private Long gameId;
 
     @Column(name = "TEAM_ID")
