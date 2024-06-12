@@ -21,10 +21,12 @@ public class BettingController {
         return bettingService.findBettingsByUserId(userIdToken);
     }
 
-    @PostMapping
+    @PostMapping("/{userIdToken}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addBetting(@RequestBody BettingRequest req) {
-        bettingService.insertBetting(req);
+    public void addBetting(
+            @PathVariable String userIdToken,
+            @RequestBody BettingRequest req) {
+        bettingService.insertBetting(userIdToken, req);
     }
 
     @DeleteMapping("/{bettingId}")

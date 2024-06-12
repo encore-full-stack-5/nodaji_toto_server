@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface BettingService {
     List<BettingResponse> findBettingsByUserId(String userIdToken);
-    void insertBetting(BettingRequest req);
+    void insertBetting(String userIdToken, BettingRequest req);
     void deleteBetting(Long bettingId);
 }

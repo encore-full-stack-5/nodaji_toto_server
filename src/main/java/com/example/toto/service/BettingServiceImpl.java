@@ -20,7 +20,7 @@ public class BettingServiceImpl implements BettingService{
     }
 
     @Override
-    public void insertBetting(BettingRequest req) {
+    public void insertBetting(String userIdToken, BettingRequest req) {
 
     }
 

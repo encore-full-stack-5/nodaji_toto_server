@@ -1,6 +1,22 @@
 package com.example.toto.domain.dto.request;
 
-public record BettingRequest(
+import com.example.toto.domain.entity.Betting;
 
+import java.util.Date;
+import java.util.UUID;
+
+public record BettingRequest(
+    Long gameId,
+    Long teamId,
+    Integer pointAmount
 ) {
+    public Betting toEntity(UUID userId) {
+        return Betting.builder()
+                .userId(userId)
+                .gameId(gameId)
+                .teamId(teamId)
+                .pointAmount(pointAmount)
+                .createdAt(new Date())
+                .build();
+    }
 }
