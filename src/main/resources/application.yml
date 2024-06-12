@@ -1,0 +1,17 @@
+server:
+  port: 8000
+spring:
+  application:
+    name: toto
+  datasource:
+    url: jdbc:mysql://localhost:3306/nodagi_toto?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+#  kafka:
+#    bootstrap-servers: localhost:9092
+#    producer:
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
