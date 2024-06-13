@@ -31,6 +31,6 @@ public class Betting {
     @Column(name = "BETTING_CREATED_AT", nullable = false)
     private Date createdAt;
 
-    @OneToMany(mappedBy = "bettingGameId")
+    @OneToMany(mappedBy = "bettingGameId", cascade = CascadeType.REMOVE)
     private List<BettingGame> bettingGames;
 }
