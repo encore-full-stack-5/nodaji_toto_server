@@ -16,7 +16,6 @@ public record BettingRequest(
                 .gameId(gameId)
                 .teamId(teamId)
                 .pointAmount(pointAmount)
-                .createdAt(new Date())
                 .build();
     }
 }
