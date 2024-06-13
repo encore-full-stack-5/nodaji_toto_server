@@ -21,7 +21,6 @@ public class JwtUtils {
         return payload.getSubject();
     }
 
-
     public JwtUtils(@Value("${token.secret}") String secret) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
     }
