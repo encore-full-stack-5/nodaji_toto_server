@@ -18,7 +18,7 @@ public class Team {
     @Column(name = "TEAM_ID")
     private Long teamId;
 
-    @Column(name = "TEAM_NAME")
+    @Column(name = "TEAM_NAME", nullable = false)
     private String teamName;
 
     @OneToMany(mappedBy = "teamHome")
