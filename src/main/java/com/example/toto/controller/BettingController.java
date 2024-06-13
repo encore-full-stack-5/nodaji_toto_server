@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bet")
+@RequestMapping("api/v1/betting")
 @RequiredArgsConstructor
 public class BettingController {
     private final BettingService bettingService;
