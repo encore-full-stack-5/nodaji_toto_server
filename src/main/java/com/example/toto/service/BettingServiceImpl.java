@@ -39,6 +39,7 @@ public class BettingServiceImpl implements BettingService{
 
     @Override
     public void deleteBetting(Long bettingId) {
-
+        bettingRepository.findById(bettingId).orElseThrow(IllegalArgumentException::new);
+        bettingRepository.deleteById(bettingId);
     }
 }
