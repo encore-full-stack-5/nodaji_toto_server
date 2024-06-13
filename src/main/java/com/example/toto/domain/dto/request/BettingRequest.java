@@ -2,7 +2,6 @@ package com.example.toto.domain.dto.request;
 
 import com.example.toto.domain.entity.Betting;
 
-import java.util.Date;
 import java.util.UUID;
 
 public record BettingRequest(
