@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 import java.util.UUID;
@@ -19,19 +20,20 @@ public class Betting {
     @Column(name = "BETTING_ID")
     private Long bettingId;
 
-    @Column(name = "USER_ID")
+    @Column(name = "USER_ID", nullable = false)
     private UUID userId;
 
-    @Column(name = "GAME_ID")
+    @Column(name = "GAME_ID", nullable = false)
     private Long gameId;
 
-    @Column(name = "TEAM_ID")
+    @Column(name = "TEAM_ID", nullable = false)
     private Long teamId;
 
-    @Column(name = "BETTING_POINT_AMOUNT")
+    @Column(name = "BETTING_POINT_AMOUNT", nullable = false)
     private Integer pointAmount;
 
-    @Column(name = "BETTING_CREATED_AT")
+    @CreationTimestamp
+    @Column(name = "BETTING_CREATED_AT", nullable = false)
     private Date createdAt;
 
     @Column(name = "BETTING_RESULT")

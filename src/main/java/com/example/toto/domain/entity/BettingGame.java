@@ -17,10 +17,10 @@ public class BettingGame {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "GAME_ID")
+    @JoinColumn(name = "GAME_ID", nullable = false)
     private Game gameId;
 
     @ManyToOne
-    @JoinColumn(name = "BETTING_ID")
+    @JoinColumn(name = "BETTING_ID", nullable = false)
     private Betting bettingId;
 }
