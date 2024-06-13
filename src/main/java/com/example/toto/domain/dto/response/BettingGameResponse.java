@@ -9,7 +9,7 @@ public record BettingGameResponse(
         Date gameStartAt,
         String teamHome,
         String teamAway,
-        Integer gameRtp,
+        Float gameRtp,
         Long teamId,
         Integer result
 ) {

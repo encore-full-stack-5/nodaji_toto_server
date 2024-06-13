@@ -11,7 +11,7 @@ public record BettingGameRequest(
     public BettingGame toEntity(Betting betting, Game game) {
         return BettingGame.builder()
                 .bettingId(betting)
-                .gameId(game)
+                .game(game)
                 .teamId(teamId)
                 .build();
     }

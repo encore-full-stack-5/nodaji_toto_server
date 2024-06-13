@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.UUID;
 
 public record BettingRequest(
-    Long gameId,
-    Long teamId,
     Integer pointAmount,
     List<BettingGameRequest> bettingGames
 ) {

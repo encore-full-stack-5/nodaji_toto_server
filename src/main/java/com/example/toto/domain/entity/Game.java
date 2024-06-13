@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -18,10 +19,10 @@ public class Game {
     @Column(name = "GAME_ID")
     private Long gameId;
 
-    @Column(name = "GAME_START_AT", nullable = false)
+    @Column(name = "GAME_START_AT", nullable = false, columnDefinition = "DATETIME(0)")
     private Date gameStartAt;
 
-    @Column(name = "GAME_BET_END_AT", nullable = false)
+    @Column(name = "GAME_BET_END_AT", nullable = false, columnDefinition = "DATETIME(0)")
     private Date betEndAt;
 
     @ManyToOne
@@ -33,10 +34,10 @@ public class Game {
     private Team teamAway;
 
     @Column(name = "GAME_RTP_HOME", nullable = false)
-    private Integer rtpHome;
+    private Float rtpHome;
 
     @Column(name = "GAME_RTP_AWAY", nullable = false)
-    private Integer rtpAway;
+    private Float rtpAway;
 
     @Column(name = "GAME_RESULT")
     private Integer gameResult;
