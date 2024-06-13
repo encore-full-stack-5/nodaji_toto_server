@@ -3,12 +3,14 @@ package com.example.toto.controller;
 import com.example.toto.domain.dto.request.BettingRequest;
 import com.example.toto.domain.dto.response.BettingResponse;
 import com.example.toto.service.BettingService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/bet")
@@ -16,21 +18,26 @@ import java.util.UUID;
 public class BettingController {
     private final BettingService bettingService;
 
-    @GetMapping("/{userIdToken}")
-    public List<BettingResponse> getAllBettingsByUserId(@PathVariable String userIdToken) {
+    @GetMapping
+    public List<BettingResponse> getAllBettingsByUserId(
+            @RequestHeader("Authorization") String userIdToken
+    ) {
         return bettingService.findBettingsByUserId(userIdToken);
     }
 
-    @PostMapping("/{userIdToken}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void addBetting(
-            @PathVariable String userIdToken,
-            @RequestBody BettingRequest req) {
+            @RequestHeader("Authorization") String userIdToken,
+            @RequestBody BettingRequest req
+    ) {
         bettingService.insertBetting(userIdToken, req);
     }
 
     @DeleteMapping("/{bettingId}")
-    public void deleteBetting(@PathVariable Long bettingId) {
+    public void deleteBetting(
+            @PathVariable("bettingId") Long bettingId
+    ) {
         bettingService.deleteBetting(bettingId);
     }
 }
