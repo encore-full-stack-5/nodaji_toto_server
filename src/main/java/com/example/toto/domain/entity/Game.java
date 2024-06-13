@@ -18,25 +18,25 @@ public class Game {
     @Column(name = "GAME_ID")
     private Long gameId;
 
-    @Column(name = "GAME_START_AT")
+    @Column(name = "GAME_START_AT", nullable = false, columnDefinition = "DATETIME(0)")
     private Date gameStartAt;
 
-    @Column(name = "GAME_BET_END_AT")
+    @Column(name = "GAME_BET_END_AT", nullable = false, columnDefinition = "DATETIME(0)")
     private Date betEndAt;
 
     @ManyToOne
-    @JoinColumn(name = "TEAM_HOME")
+    @JoinColumn(name = "TEAM_HOME", nullable = false)
     private Team teamHome;
 
     @ManyToOne
-    @JoinColumn(name = "TEAM_AWAY")
+    @JoinColumn(name = "TEAM_AWAY", nullable = false)
     private Team teamAway;
 
-    @Column(name = "GAME_RTP_HOME")
-    private Integer rtpHome;
+    @Column(name = "GAME_RTP_HOME", nullable = false)
+    private Float rtpHome;
 
-    @Column(name = "GAME_RTP_AWAY")
-    private Integer rtpAway;
+    @Column(name = "GAME_RTP_AWAY", nullable = false)
+    private Float rtpAway;
 
     @Column(name = "GAME_RESULT")
     private Integer gameResult;
