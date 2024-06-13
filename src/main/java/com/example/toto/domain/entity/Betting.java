@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,12 +24,6 @@ public class Betting {
     @Column(name = "USER_ID", nullable = false)
     private UUID userId;
 
-    @Column(name = "GAME_ID", nullable = false)
-    private Long gameId;
-
-    @Column(name = "TEAM_ID", nullable = false)
-    private Long teamId;
-
     @Column(name = "BETTING_POINT_AMOUNT", nullable = false)
     private Integer pointAmount;
 
@@ -36,6 +31,6 @@ public class Betting {
     @Column(name = "BETTING_CREATED_AT", nullable = false)
     private Date createdAt;
 
-    @Column(name = "BETTING_RESULT")
-    private Integer bettingResult;
+    @OneToMany(mappedBy = "bettingGameId")
+    private List<BettingGame> bettingGames;
 }

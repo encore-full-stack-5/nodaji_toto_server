@@ -13,14 +13,20 @@ import lombok.NoArgsConstructor;
 @Table(name = "BETTING_GAME")
 public class BettingGame {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Long id;
+    @Column(name = "BETTING_GAME_ID")
+    private Long bettingGameId;
+
+    @ManyToOne
+    @JoinColumn(name = "BETTING_ID", nullable = false)
+    private Betting bettingId;
 
     @ManyToOne
     @JoinColumn(name = "GAME_ID", nullable = false)
     private Game gameId;
 
-    @ManyToOne
-    @JoinColumn(name = "BETTING_ID", nullable = false)
-    private Betting bettingId;
+    @Column(name = "TEAM_ID", nullable = false)
+    private Long teamId;
+
+    @Column(name = "BETTING_GAME_RESULT")
+    private Integer result;
 }
