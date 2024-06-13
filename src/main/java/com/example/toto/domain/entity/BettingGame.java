@@ -22,7 +22,7 @@ public class BettingGame {
 
     @ManyToOne
     @JoinColumn(name = "GAME_ID", nullable = false)
-    private Game gameId;
+    private Game game;
 
     @Column(name = "TEAM_ID", nullable = false)
     private Long teamId;
