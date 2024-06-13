@@ -2,18 +2,18 @@ package com.example.toto.domain.dto.response;
 
 import com.example.toto.domain.entity.Betting;
 
+import java.util.UUID;
+
 public record BettingResponse(
-        Long gameId,
-        Long teamId,
-        Integer bettingPointAmount,
-        Integer bettingResult
+        Long id,
+        UUID userId,
+        Integer pointAmount
 ) {
     public static BettingResponse from(Betting betting) {
         return new BettingResponse(
-                betting.getGameId(),
-                betting.getTeamId(),
-                betting.getPointAmount(),
-                betting.getBettingResult()
+                betting.getBettingId(),
+                betting.getUserId(),
+                betting.getPointAmount()
         );
     }
 }
