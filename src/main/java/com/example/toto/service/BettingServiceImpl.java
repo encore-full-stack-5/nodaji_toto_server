@@ -3,7 +3,6 @@ package com.example.toto.service;
 import com.example.toto.domain.dto.request.BettingRequest;
 import com.example.toto.domain.dto.response.BettingResponse;
 import com.example.toto.domain.entity.Betting;
-import com.example.toto.domain.entity.BettingGame;
 import com.example.toto.domain.repository.BettingGameRepository;
 import com.example.toto.domain.repository.BettingRepository;
 import com.example.toto.domain.repository.GameRepository;
