@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface GameService {
-    List<GameResponse> getGamesByParam(LocalDate date, String team);
+    List<GameResponse> getGamesByParam(LocalDate date, Long team);
     void insertGame(List<GameRequest> req);
     void updateGameResult(List<GameUpdateRequest> req);
     void deleteGame(Long gameId);

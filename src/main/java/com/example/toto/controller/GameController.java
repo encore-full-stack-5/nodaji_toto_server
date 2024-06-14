@@ -19,7 +19,7 @@ public class GameController {
     @GetMapping
     public List<GameResponse> getGames(
             @RequestParam(name = "date", required = false) LocalDate date,
-            @RequestParam(name = "team", required = false) String team
+            @RequestParam(name = "team", required = false) Long team
     ) {
         return date == null
                 ? gameService.getGamesByParam(LocalDate.now(), team)
