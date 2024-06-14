@@ -5,9 +5,10 @@ import com.example.toto.domain.dto.request.GameUpdateRequest;
 import com.example.toto.domain.dto.response.GameResponse;
 import com.example.toto.service.GameService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -18,24 +19,26 @@ public class GameController {
 
     @GetMapping
     public List<GameResponse> getGames(
-            @RequestParam(name = "date", required = false) Date date,
+            @RequestParam(name = "date", required = false) LocalDate date,
             @RequestParam(name = "team", required = false) String team
     ) {
-        return null;
+        return date == null
+                ? gameService.getGamesByParam(LocalDate.now(), team)
+                : gameService.getGamesByParam(date, team);
     }
 
     @PostMapping
-    public void addGame(@RequestBody GameRequest req) {
-
+    public void addGame(@RequestBody List<GameRequest> req) {
+        gameService.insertGame(req);
     }
 
     @PutMapping
     public void updateGameResult(@RequestBody List<GameUpdateRequest> req) {
-
+        gameService.updateGameResult(req);
     }
 
     @DeleteMapping("/{id}")
     public void deleteGame(@RequestParam("id") Long id) {
-
+        gameService.deleteGame(id);
     }
 }
