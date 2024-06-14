@@ -50,6 +50,7 @@ public class GameServiceImpl implements GameService {
     @Override
     @Transactional
     public void deleteGame(Long gameId) {
-
+        Game game = gameRepository.findById(gameId).orElseThrow(IllegalArgumentException::new);
+        gameRepository.delete(game);
     }
 }
