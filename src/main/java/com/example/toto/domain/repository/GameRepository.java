@@ -1,6 +1,5 @@
 package com.example.toto.domain.repository;
 
-import com.example.toto.domain.dto.response.GameResponse;
 import com.example.toto.domain.entity.Game;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
