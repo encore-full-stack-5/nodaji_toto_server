@@ -12,6 +12,6 @@ public class ExceptionController {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String notFoundException(NotFoundException e) {
-        return e.getMessage() + " IS NOT FOUND";
+        return e.getMessage() + " NOT FOUND";
     }
 }
