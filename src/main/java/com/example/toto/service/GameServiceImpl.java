@@ -29,6 +29,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    @Transactional
     public void insertGame(List<GameRequest> req) {
         List<Game> gameList = req.stream().map(e -> e.toEntity(
                 teamRepository.findById(e.teamHome()).orElseThrow(IllegalArgumentException::new),
@@ -47,6 +48,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    @Transactional
     public void deleteGame(Long gameId) {
 
     }
