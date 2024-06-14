@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -19,10 +20,10 @@ public class Game {
     private Long gameId;
 
     @Column(name = "GAME_START_AT", nullable = false, columnDefinition = "DATETIME(0)")
-    private Date gameStartAt;
+    private LocalDateTime gameStartAt;
 
     @Column(name = "GAME_BET_END_AT", nullable = false, columnDefinition = "DATETIME(0)")
-    private Date betEndAt;
+    private LocalDateTime betEndAt;
 
     @ManyToOne
     @JoinColumn(name = "TEAM_HOME", nullable = false)
