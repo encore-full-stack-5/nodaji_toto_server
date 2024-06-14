@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("api/v1/toto/games")
 @RequiredArgsConstructor
 public class GameController {
-    private GameService gameService;
+    private final GameService gameService;
 
     @GetMapping
     public List<GameResponse> getGames(

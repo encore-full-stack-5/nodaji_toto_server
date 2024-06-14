@@ -21,6 +21,7 @@ public record GameRequest(
                 .teamAway(away)
                 .rtpHome(rtpHome)
                 .rtpAway(rtpAway)
+                .gameResult(0)
                 .build();
     }
 }
