@@ -1,4 +1,9 @@
 package com.example.toto.domain.dto.request;
 
-public record GameUpdateRequest() {
+import com.example.toto.domain.entity.Game;
+
+public record GameUpdateRequest(
+        Long gameId,
+        Integer result
+) {
 }

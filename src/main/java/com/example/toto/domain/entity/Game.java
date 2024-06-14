@@ -40,4 +40,9 @@ public class Game {
 
     @Column(name = "GAME_RESULT")
     private Integer gameResult;
+
+
+    public void updateResult(Integer result){
+        this.gameResult = result;
+    }
 }

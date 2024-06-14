@@ -6,6 +6,7 @@ import com.example.toto.domain.dto.response.GameResponse;
 import com.example.toto.domain.entity.Game;
 import com.example.toto.domain.repository.GameRepository;
 import com.example.toto.domain.repository.TeamRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +38,12 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    @Transactional
     public void updateGameResult(List<GameUpdateRequest> req) {
-
+        req.forEach(e -> {
+            Game game = gameRepository.findById(e.gameId()).orElseThrow(IllegalArgumentException::new);
+            game.updateResult(e.result());
+        });
     }
 
     @Override
