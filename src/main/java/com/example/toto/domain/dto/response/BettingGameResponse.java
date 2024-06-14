@@ -3,7 +3,6 @@ package com.example.toto.domain.dto.response;
 import com.example.toto.domain.entity.BettingGame;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public record BettingGameResponse(
         Long gameId,
