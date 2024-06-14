@@ -2,11 +2,11 @@ package com.example.toto.domain.dto.response;
 
 import com.example.toto.domain.entity.BettingGame;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public record BettingGameResponse(
         Long gameId,
-        Date gameStartAt,
+        LocalDateTime gameStartAt,
         String teamHome,
         String teamAway,
         Float gameRtp,
