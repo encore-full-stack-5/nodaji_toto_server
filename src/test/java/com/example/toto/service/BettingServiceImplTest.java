@@ -4,16 +4,11 @@ import com.example.toto.TestInit;
 import com.example.toto.domain.dto.response.BettingResponse;
 import com.example.toto.domain.entity.Betting;
 import com.example.toto.domain.entity.BettingGame;
-import com.example.toto.domain.entity.Game;
-import com.example.toto.domain.entity.Team;
 import com.example.toto.domain.repository.BettingGameRepository;
 import com.example.toto.domain.repository.BettingRepository;
-import com.example.toto.domain.repository.GameRepository;
-import com.example.toto.domain.repository.TeamRepository;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.utils.JwtUtils;
 import io.jsonwebtoken.ExpiredJwtException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,8 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class BettingServiceImplTest {
     @Mock
     private BettingRepository bettingRepository;
-    @Mock
-    private BettingGameRepository bettingGameRepository;
     @Mock
     private JwtUtils jwtUtils;
     @InjectMocks
