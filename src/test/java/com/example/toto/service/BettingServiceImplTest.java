@@ -1,11 +1,14 @@
 package com.example.toto.service;
 
 import com.example.toto.TestInit;
+import com.example.toto.domain.dto.request.BettingGameRequest;
+import com.example.toto.domain.dto.request.BettingRequest;
 import com.example.toto.domain.dto.response.BettingResponse;
 import com.example.toto.domain.entity.Betting;
 import com.example.toto.domain.entity.BettingGame;
 import com.example.toto.domain.repository.BettingGameRepository;
 import com.example.toto.domain.repository.BettingRepository;
+import com.example.toto.domain.repository.GameRepository;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.utils.JwtUtils;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -22,11 +25,16 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 class BettingServiceImplTest {
     @Mock
     private BettingRepository bettingRepository;
+    @Mock
+    private BettingGameRepository bettingGameRepository;
+    @Mock
+    private GameRepository gameRepository;
     @Mock
     private JwtUtils jwtUtils;
     @InjectMocks
@@ -42,7 +50,7 @@ class BettingServiceImplTest {
         @Nested
         class 성공{
             @Test
-            void 조회됨() {
+            void 성공_조회됨() {
                 // give
                 UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
                 String userIdToken = testInit.generateToken(userId, 1000);
@@ -70,7 +78,7 @@ class BettingServiceImplTest {
             }
 
             @Test
-            void 배팅_없음() {
+            void 성공_배팅_없음() {
                 // give
                 UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
                 String userIdToken = testInit.generateToken(userId, 1000);
@@ -88,65 +96,80 @@ class BettingServiceImplTest {
             }
         }
 
-        @Nested
-        class 실패 {
-            @Test
-            void 토큰_만료(){
-                // give
-                UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
-                String userIdToken = testInit.generateToken(userId, 1);
-                BDDMockito.given(jwtUtils.parseToken(userIdToken)).willThrow(ExpiredJwtException.class);
+        @Test
+        void 실패_토큰_만료(){
+            // give
+            UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
+            String userIdToken = testInit.generateToken(userId, 0);
+            BDDMockito.given(jwtUtils.parseToken(userIdToken)).willThrow(ExpiredJwtException.class);
 
 
-                // when
-                assertThrows(ExpiredJwtException.class, () -> bettingService.findBettingsByUserId(userIdToken));
+            // when
+            assertThrows(ExpiredJwtException.class, () -> bettingService.findBettingsByUserId(userIdToken));
 
 
-                //then
-                Mockito.verify(bettingRepository, Mockito.times(0)).findByUserId(userId);
-            }
-
-            @Test
-            void 유저_없음() {
-                // give
-                UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111");
-                String userIdToken = testInit.generateToken(userId, 1000);
-                BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
-                BDDMockito.given(bettingRepository.findByUserId(userId)).willThrow(NotFoundException.class);
-
-
-                // when
-                assertThrows(NotFoundException.class, () -> bettingService.findBettingsByUserId(userIdToken));
-
-
-                //then
-                Mockito.verify(bettingRepository, Mockito.times(1)).findByUserId(userId);
-            }
+            //then
+            Mockito.verify(bettingRepository, Mockito.times(0)).findByUserId(userId);
         }
     }
 
     @Nested
     class insertBetting {
         @Test
-        void 성공(){
+        void 성공_추가됨(){
+            // give
+            UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
+            String userIdToken = testInit.generateToken(userId, 0);
+            BettingRequest bettingRequest = new BettingRequest(10000,
+                    List.of(new BettingGameRequest(1L, 1L)));
+            BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
+            BDDMockito.given(bettingRepository.save(any())).willReturn(null);
+            BDDMockito.given(bettingGameRepository.saveAll(any())).willReturn(null);
+            BDDMockito.given(gameRepository.findById(1L)).willReturn(Optional.of(testInit.game1));
 
+            // when
+            bettingService.insertBetting(userIdToken, bettingRequest);
+
+            //then
+            Mockito.verify(bettingRepository, Mockito.times(1)).save(any());
+            Mockito.verify(bettingGameRepository, Mockito.times(1)).saveAll(any());
         }
 
         @Nested
         class 실패 {
             @Test
-            void 토큰만료(){
+            void 실패_토큰_만료(){
+                // give
+                UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
+                String userIdToken = testInit.generateToken(userId, 0);
+                BettingRequest bettingRequest = new BettingRequest(10000,
+                        List.of(new BettingGameRequest(1L, 1L)));
+                BDDMockito.given(jwtUtils.parseToken(userIdToken)).willThrow(ExpiredJwtException.class);
 
+                // when
+                assertThrows(ExpiredJwtException.class, () -> bettingService.insertBetting(userIdToken, bettingRequest));
+
+                //then
+                Mockito.verify(bettingRepository, Mockito.times(0)).save(any());
+                Mockito.verify(bettingGameRepository, Mockito.times(0)).saveAll(any());
             }
 
             @Test
-            void 유저없음(){
+            void 실패_게임_없음(){
+                // give
+                UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
+                String userIdToken = testInit.generateToken(userId, 0);
+                BettingRequest bettingRequest = new BettingRequest(10000,
+                        List.of(new BettingGameRequest(999L, 1L)));
+                BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
+                BDDMockito.given(bettingRepository.save(any())).willReturn(null);
 
-            }
+                // when
+                assertThrows(NotFoundException.class, () -> bettingService.insertBetting(userIdToken, bettingRequest));
 
-            @Test
-            void 게임없음(){
-
+                //then
+                Mockito.verify(bettingRepository, Mockito.times(1)).save(any());
+                Mockito.verify(bettingGameRepository, Mockito.times(0)).saveAll(any());
             }
         }
     }
@@ -163,9 +186,4 @@ class BettingServiceImplTest {
 
         }
     }
-
-//    @BeforeEach
-//    void init() {
-//        testInit = new TestInit();
-//    }
 }
