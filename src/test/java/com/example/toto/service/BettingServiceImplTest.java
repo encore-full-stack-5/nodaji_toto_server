@@ -26,6 +26,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
 class BettingServiceImplTest {
@@ -178,12 +179,35 @@ class BettingServiceImplTest {
     class deleteBetting {
         @Test
         void 성공(){
+            // give
+            UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
+            List<BettingGame> bettingGames = new ArrayList<>(List.of(
+                    new BettingGame(1L, null, testInit.game1, 1L, 0),
+                    new BettingGame(2L, null, testInit.game2, 3L, 0)
+            ));
+            Betting bettings = new Betting(1L, userId, 10000, LocalDateTime.now(), bettingGames);
+            BDDMockito.given(bettingRepository.findById(1L)).willReturn(Optional.of(bettings));
+            doNothing().when(bettingRepository).deleteById(any());
 
+            // when
+            bettingService.deleteBetting(1L);
+
+            // then
+            Mockito.verify(bettingRepository, Mockito.times(1)).findById(1L);
+            Mockito.verify(bettingRepository, Mockito.times(1)).deleteById(any());
         }
 
         @Test
         void 실패_배팅없음(){
+            // give
+            BDDMockito.given(bettingRepository.findById(1L)).willThrow(NotFoundException.class);
 
+            // when
+            assertThrows(NotFoundException.class, () -> bettingService.deleteBetting(1L));
+
+            // then
+            Mockito.verify(bettingRepository, Mockito.times(1)).findById(1L);
+            Mockito.verify(bettingRepository, Mockito.times(0)).deleteById(any());
         }
     }
 }
