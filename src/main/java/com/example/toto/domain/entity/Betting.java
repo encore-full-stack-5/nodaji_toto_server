@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +29,7 @@ public class Betting {
 
     @CreationTimestamp
     @Column(name = "BETTING_CREATED_AT", nullable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "bettingGameId", cascade = CascadeType.REMOVE)
     private List<BettingGame> bettingGames;
