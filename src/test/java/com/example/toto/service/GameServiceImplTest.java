@@ -1,9 +1,12 @@
 package com.example.toto.service;
 
 import com.example.toto.TestTeamInit;
+import com.example.toto.domain.dto.request.GameRequest;
 import com.example.toto.domain.dto.response.GameResponse;
 import com.example.toto.domain.entity.Game;
 import com.example.toto.domain.repository.GameRepository;
+import com.example.toto.domain.repository.TeamRepository;
+import com.example.toto.exception.NotFoundException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,13 +21,17 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 class GameServiceImplTest {
     @Mock
     private GameRepository gameRepository;
+    @Mock
+    private TeamRepository teamRepository;
     @InjectMocks
     private GameServiceImpl gameService;
 
@@ -154,12 +161,50 @@ class GameServiceImplTest {
     class insertGame{
         @Test
         void 성공_추가됨() {
+            // give
+            List<GameRequest> games = new ArrayList<>(List.of(
+                    new GameRequest(
+                            LocalDateTime.of(2024, 6, 15, 18, 30),
+                            LocalDateTime.of(2024, 6, 15, 18, 20),
+                            1L,
+                            2L,
+                            1.5f,
+                            2f
+                    )
+            ));
+            BDDMockito.given(teamRepository.findById(1L)).willReturn(Optional.of(testTeamInit.teamA));
+            BDDMockito.given(teamRepository.findById(2L)).willReturn(Optional.of(testTeamInit.teamB));
+            BDDMockito.given(gameRepository.saveAll(any())).willReturn(null);
 
+            // when
+            gameService.insertGame(games);
+
+            // then
+            Mockito.verify(teamRepository, Mockito.times(2)).findById(any());
+            Mockito.verify(gameRepository, Mockito.times(1)).saveAll(any());
         }
 
         @Test
         void 실패_팀_없음() {
+            // give
+            List<GameRequest> games = new ArrayList<>(List.of(
+                    new GameRequest(
+                            LocalDateTime.of(2024, 6, 15, 18, 30),
+                            LocalDateTime.of(2024, 6, 15, 18, 20),
+                            999L,
+                            9999L,
+                            1.5f,
+                            2f
+                    )
+            ));
+            BDDMockito.given(teamRepository.findById(999L)).willThrow(NotFoundException.class);
 
+            // when
+            assertThrows(NotFoundException.class, () -> gameService.insertGame(games));
+
+            // then
+            Mockito.verify(teamRepository, Mockito.times(1)).findById(any());
+            Mockito.verify(gameRepository, Mockito.times(0)).saveAll(any());
         }
     }
 
