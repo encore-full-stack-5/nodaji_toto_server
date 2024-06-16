@@ -6,7 +6,9 @@ import com.example.toto.domain.entity.Betting;
 import com.example.toto.domain.repository.BettingGameRepository;
 import com.example.toto.domain.repository.BettingRepository;
 import com.example.toto.domain.repository.GameRepository;
+import com.example.toto.exception.NotFoundException;
 import com.example.toto.utils.JwtUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,18 +30,20 @@ public class BettingServiceImpl implements BettingService{
     }
 
     @Override
+    @Transactional
     public void insertBetting(String userIdToken, BettingRequest req) {
         Betting betting = req.toEntity(UUID.fromString(jwtUtils.parseToken(userIdToken)));
         bettingRepository.save(betting);
         bettingGameRepository.saveAll(req.bettingGames().stream()
                 .map(e -> e.toEntity(betting, gameRepository.findById(e.gameId())
-                        .orElseThrow(IllegalArgumentException::new)))
+                        .orElseThrow(() -> new NotFoundException("GAME"))))
                 .toList());
     }
 
     @Override
+    @Transactional
     public void deleteBetting(Long bettingId) {
-        bettingRepository.findById(bettingId).orElseThrow(IllegalArgumentException::new);
+        bettingRepository.findById(bettingId).orElseThrow(() -> new NotFoundException("BETTING"));
         bettingRepository.deleteById(bettingId);
     }
 }
