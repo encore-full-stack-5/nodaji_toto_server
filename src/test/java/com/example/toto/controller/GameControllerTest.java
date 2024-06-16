@@ -1,9 +1,11 @@
 package com.example.toto.controller;
 
 import com.example.toto.domain.dto.request.GameRequest;
+import com.example.toto.domain.dto.request.GameUpdateRequest;
 import com.example.toto.domain.dto.response.GameResponse;
 import com.example.toto.domain.repository.GameRepository;
 import com.example.toto.domain.repository.TeamRepository;
+import com.example.toto.exception.InvalidValueException;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.service.GameService;
 import com.example.toto.service.GameServiceImpl;
@@ -194,18 +196,48 @@ class GameControllerTest {
     @Nested
     class updateGameResult {
         @Test
-        void 성공_갱신됨() {
+        void 성공_갱신됨() throws Exception {
+            String request = objectMapper.writeValueAsString(List.of(
+                    new GameUpdateRequest(1L, 1)
+            ));
 
+            mvc.perform(put("/api/v1/toto/games")
+                    .content(request)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
         }
 
         @Test
-        void 실패_게임_없음() {
+        void 실패_게임_없음() throws Exception {
+            String request = objectMapper.writeValueAsString(List.of(
+                    new GameUpdateRequest(1L, 1)
+            ));
+            doThrow(NotFoundException.class).when(gameService).updateGameResult(any());
 
+            mvc.perform(put("/api/v1/toto/games")
+                            .content(request)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect((r) -> assertTrue(
+                            r.getResolvedException().getClass()
+                                    .isAssignableFrom(NotFoundException.class)));
         }
 
         @Test
-        void 실패_값_검증_실패() {
+        void 실패_값_검증_실패() throws Exception {
+            String request = objectMapper.writeValueAsString(List.of(
+                    new GameUpdateRequest(1L, 1)
+            ));
+            doThrow(InvalidValueException.class).when(gameService).updateGameResult(any());
 
+            mvc.perform(put("/api/v1/toto/games")
+                            .content(request)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect((r) -> assertTrue(
+                            r.getResolvedException().getClass()
+                                    .isAssignableFrom(InvalidValueException.class)));
         }
     }
 
