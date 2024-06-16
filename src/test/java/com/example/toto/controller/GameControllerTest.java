@@ -3,17 +3,13 @@ package com.example.toto.controller;
 import com.example.toto.domain.dto.request.GameRequest;
 import com.example.toto.domain.dto.request.GameUpdateRequest;
 import com.example.toto.domain.dto.response.GameResponse;
-import com.example.toto.domain.repository.GameRepository;
-import com.example.toto.domain.repository.TeamRepository;
 import com.example.toto.exception.InvalidValueException;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.service.GameService;
-import com.example.toto.service.GameServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,12 +19,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -38,10 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class GameControllerTest {
     @MockBean
     private GameService gameService;
-    @Mock
-    private GameRepository gameRepository;
-    @Mock
-    private TeamRepository teamRepository;
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -244,13 +234,22 @@ class GameControllerTest {
     @Nested
     class deleteGame {
         @Test
-        void 성공_삭제됨() {
+        void 성공_삭제됨() throws Exception {
+            long gameId = 1L;
 
+            mvc.perform(delete("/api/v1/toto/games/" + gameId))
+                    .andExpect(status().isOk());
         }
 
         @Test
-        void 실패_게임_없음() {
+        void 실패_게임_없음() throws Exception {
+            long gameId = 1L;
+            doThrow(NotFoundException.class).when(gameService).deleteGame(any());
 
+            mvc.perform(delete("/api/v1/toto/games/" + gameId))
+                    .andExpect((r) -> assertTrue(
+                            r.getResolvedException().getClass()
+                                    .isAssignableFrom(NotFoundException.class)));
         }
     }
 }
