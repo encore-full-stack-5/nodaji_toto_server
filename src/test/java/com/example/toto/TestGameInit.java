@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
-public class TestInit {
+public class TestGameInit {
     public final Team teamA = new Team(1L, "teamA", null, null);
     public final Team teamB = new Team(2L, "teamB", null, null);
     public final Team teamC = new Team(3L, "teamC", null, null);
