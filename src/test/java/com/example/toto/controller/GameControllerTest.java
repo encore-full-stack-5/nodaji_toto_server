@@ -3,6 +3,7 @@ package com.example.toto.controller;
 import com.example.toto.domain.repository.GameRepository;
 import com.example.toto.service.GameServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +24,70 @@ class GameControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Test
-    void getGames() {
+    @Nested
+    class getGames {
+        @Test
+        void 성공_파라미터_모두_있음() {
+
+        }
+
+        @Test
+        void 성공_파라미터_날짜_없음() {
+
+        }
+
+        @Test
+        void 성공_파라미터_팀_없음() {
+
+        }
+
+        @Test
+        void 성공_파라미터_모두_없음() {
+
+        }
     }
 
-    @Test
-    void addGame() {
+    @Nested
+    class addGame {
+        @Test
+        void 성공_추가됨() {
+
+        }
+
+        @Test
+        void 실패_팀_없음() {
+
+        }
     }
 
-    @Test
-    void updateGameResult() {
+    @Nested
+    class updateGameResult {
+        @Test
+        void 성공_갱신됨() {
+
+        }
+
+        @Test
+        void 실패_게임_없음() {
+
+        }
+
+        @Test
+        void 실패_값_검증_실패() {
+
+        }
     }
 
-    @Test
-    void deleteGame() {
+    @Nested
+    class deleteGame {
+        @Test
+        void 성공_삭제됨() {
+
+        }
+
+        @Test
+        void 실패_게임_없음() {
+
+        }
     }
 }
