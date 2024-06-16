@@ -1,7 +1,11 @@
 package com.example.toto.controller;
 
+import com.example.toto.domain.dto.request.GameRequest;
 import com.example.toto.domain.dto.response.GameResponse;
 import com.example.toto.domain.repository.GameRepository;
+import com.example.toto.domain.repository.TeamRepository;
+import com.example.toto.exception.NotFoundException;
+import com.example.toto.service.GameService;
 import com.example.toto.service.GameServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Nested;
@@ -11,6 +15,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
@@ -20,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,9 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(GameController.class)
 class GameControllerTest {
     @MockBean
-    private GameServiceImpl gameService;
+    private GameService gameService;
     @Mock
     private GameRepository gameRepository;
+    @Mock
+    private TeamRepository teamRepository;
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -138,13 +148,46 @@ class GameControllerTest {
     @Nested
     class addGame {
         @Test
-        void 성공_추가됨() {
+        void 성공_추가됨() throws Exception{
+            String request = objectMapper.writeValueAsString(List.of(
+                    new GameRequest(
+                            LocalDateTime.of(2024, 6, 15, 18, 30),
+                            LocalDateTime.of(2024, 6, 15, 18, 20),
+                            1L,
+                            2L,
+                            1.5f,
+                            2f
+                    )
+            ));
 
+            mvc.perform(post("/api/v1/toto/games")
+                    .content(request)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isCreated());
         }
 
         @Test
-        void 실패_팀_없음() {
+        void 실패_팀_없음() throws Exception {
+            String request = objectMapper.writeValueAsString(List.of(
+                    new GameRequest(
+                            LocalDateTime.of(2024, 6, 15, 18, 30),
+                            LocalDateTime.of(2024, 6, 15, 18, 20),
+                            999L,
+                            9999L,
+                            1.5f,
+                            2f
+                    )
+            ));
+            doThrow(NotFoundException.class).when(gameService).insertGame(any());
 
+            mvc.perform(post("/api/v1/toto/games")
+                    .content(request)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect((r) -> assertTrue(
+                            r.getResolvedException().getClass()
+                                    .isAssignableFrom(NotFoundException.class)));
         }
     }
 
