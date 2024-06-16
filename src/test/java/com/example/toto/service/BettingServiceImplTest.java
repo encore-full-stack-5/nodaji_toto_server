@@ -94,7 +94,6 @@ class BettingServiceImplTest {
                 assertTrue(response.isEmpty());
             }
 
-
         @Test
         void 실패_토큰_만료(){
             // give

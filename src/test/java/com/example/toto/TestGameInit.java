@@ -1,7 +1,6 @@
 package com.example.toto;
 
 import com.example.toto.domain.entity.Game;
-import com.example.toto.domain.entity.Team;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
