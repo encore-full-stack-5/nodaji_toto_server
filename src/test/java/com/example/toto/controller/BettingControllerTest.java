@@ -5,7 +5,6 @@ import com.example.toto.domain.dto.request.BettingGameRequest;
 import com.example.toto.domain.dto.request.BettingRequest;
 import com.example.toto.domain.dto.response.BettingGameResponse;
 import com.example.toto.domain.dto.response.BettingResponse;
-import com.example.toto.exception.InvalidValueException;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.service.BettingService;
 import com.example.toto.utils.JwtUtils;
