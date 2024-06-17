@@ -2,6 +2,7 @@ package com.example.toto.controller;
 
 import com.example.toto.exception.InvalidValueException;
 import com.example.toto.exception.NotFoundException;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,5 +21,11 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String invalidValueException() {
         return "INVALID VALUE";
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String tokenExpiredException() {
+        return "TOKEN EXPIRED";
     }
 }
