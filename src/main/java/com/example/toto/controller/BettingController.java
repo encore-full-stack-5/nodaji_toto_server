@@ -18,15 +18,6 @@ import java.util.List;
 public class BettingController {
     private final BettingService bettingService;
 
-    @GetMapping("/test")
-    public String getToken() {
-        return Jwts.builder()
-                .subject("00000000-0000-0000-0000-000000000000")
-                .expiration(new Date(System.currentTimeMillis() + 3600000))
-                .signWith(Keys.hmacShaKeyFor("SecretKeyHereSecretKeyHereSecretKeyHereSecretKeyHere".getBytes()))
-                .compact();
-    }
-
     @GetMapping
     public List<BettingResponse> getAllBettingsByUserId(
             @RequestHeader("Authorization") String userIdToken
