@@ -52,10 +52,10 @@ public class BettingServiceImpl implements BettingService{
     @Override
     @Transactional
     public void updateBettingResult(GameUpdateRequest req) {
-        List<BettingGame> byGameId = bettingGameRepository.findAllByGameId(req.gameId());
+        List<BettingGame> byGameId = bettingGameRepository.findAllByGame_GameId(req.gameId());
         byGameId.forEach(betting -> {
             betting.setBettingResult(betting.getTeamId().equals(req.gameId()) ? 2 : 1);
-            List<BettingGame> allByBettingId = bettingGameRepository.findAllByBettingId(betting.getBettingId().getBettingId());
+            List<BettingGame> allByBettingId = bettingGameRepository.findAllByBettingId_BettingId(betting.getBettingId().getBettingId());
             List<BettingGame> filterByResult = allByBettingId.stream().filter(
                             bettingGame -> bettingGame.getResult().equals(2)).toList();
             if(allByBettingId.size() == filterByResult.size()) {

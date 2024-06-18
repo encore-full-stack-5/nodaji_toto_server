@@ -8,6 +8,6 @@ import java.util.List;
 public interface BettingGameRepository
         extends JpaRepository<BettingGame, Long> {
 
-    List<BettingGame> findAllByGameId(Long gameId);
-    List<BettingGame> findAllByBettingId(Long bettingID);
+    List<BettingGame> findAllByGame_GameId(Long gameId);
+    List<BettingGame> findAllByBettingId_BettingId(Long bettingId);
 }
