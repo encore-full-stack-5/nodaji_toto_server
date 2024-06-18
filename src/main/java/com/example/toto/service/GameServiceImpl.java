@@ -25,9 +25,9 @@ public class GameServiceImpl implements GameService {
     @Override
     public List<GameResponse> getGamesByParam(LocalDate date, Long team) {
         if(date == null) date = LocalDate.now();
-        if(team == null) return gameRepository.findGamesByDate(date, date.plusDays(1))
+        if(team == null) return gameRepository.findAllGamesByDate(date, date.plusDays(1))
                 .stream().map(GameResponse::from).toList();
-        return gameRepository.findGamesByDateAndTeam(date, date.plusDays(1), team)
+        return gameRepository.findAllGamesByDateAndTeam(date, date.plusDays(1), team)
                 .stream().map(GameResponse::from).toList();
     }
 

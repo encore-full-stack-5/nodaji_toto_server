@@ -16,7 +16,9 @@ public interface GameRepository
             "GAME_START_AT >= DATE(:date) " +
             "AND " +
             "GAME_START_AT <= DATE(:datePlusOne)", nativeQuery = true)
-    List<Game> findGamesByDate(@Param("date") LocalDate date, @Param("datePlusOne") LocalDate datePlusOne);
+    List<Game> findAllGamesByDate(
+            @Param("date") LocalDate date,
+            @Param("datePlusOne") LocalDate datePlusOne);
 
     @Query(value = "SELECT * FROM GAMES " +
             "WHERE " +
@@ -27,7 +29,7 @@ public interface GameRepository
             "(TEAM_HOME = :teamId " +
             "OR " +
             "TEAM_AWAY = :teamId)", nativeQuery = true)
-    List<Game> findGamesByDateAndTeam(
+    List<Game> findAllGamesByDateAndTeam(
             @Param("date") LocalDate date,
             @Param("datePlusOne") LocalDate datePlusOne,
             @Param("teamId")Long teamId);

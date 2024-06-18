@@ -29,4 +29,9 @@ public class BettingGame {
 
     @Column(name = "BETTING_GAME_RESULT")
     private Integer result;
+
+
+    public void setBettingResult(Integer result) {
+        this.result = result;
+    }
 }

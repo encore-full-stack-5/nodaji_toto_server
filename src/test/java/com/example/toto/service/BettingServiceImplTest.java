@@ -62,7 +62,7 @@ class BettingServiceImplTest {
             List<Betting> bettings = new ArrayList<>(List.of(
                     new Betting(1L, userId, 10000, LocalDateTime.now(), bettingGames)
             ));
-            BDDMockito.given(bettingRepository.findByUserId(userId)).willReturn(bettings);
+            BDDMockito.given(bettingRepository.findAllByUserId(userId)).willReturn(bettings);
 
 
             // when
@@ -70,7 +70,7 @@ class BettingServiceImplTest {
 
 
             //then
-            Mockito.verify(bettingRepository, Mockito.times(1)).findByUserId(userId);
+            Mockito.verify(bettingRepository, Mockito.times(1)).findAllByUserId(userId);
             assertEquals(10000, response.get(0).pointAmount());
             assertEquals(1L, response.get(0).bettingGames().get(0).teamId());
             assertEquals(3L, response.get(0).bettingGames().get(1).teamId());
@@ -82,7 +82,7 @@ class BettingServiceImplTest {
                 UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
                 String userIdToken = testGameInit.generateToken(userId, 1000);
                 BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
-                BDDMockito.given(bettingRepository.findByUserId(userId)).willReturn(new ArrayList<>());
+                BDDMockito.given(bettingRepository.findAllByUserId(userId)).willReturn(new ArrayList<>());
 
 
                 // when
@@ -90,7 +90,7 @@ class BettingServiceImplTest {
 
 
                 //then
-                Mockito.verify(bettingRepository, Mockito.times(1)).findByUserId(userId);
+                Mockito.verify(bettingRepository, Mockito.times(1)).findAllByUserId(userId);
                 assertTrue(response.isEmpty());
             }
 
@@ -107,7 +107,7 @@ class BettingServiceImplTest {
 
 
             //then
-            Mockito.verify(bettingRepository, Mockito.times(0)).findByUserId(userId);
+            Mockito.verify(bettingRepository, Mockito.times(0)).findAllByUserId(userId);
         }
     }
 

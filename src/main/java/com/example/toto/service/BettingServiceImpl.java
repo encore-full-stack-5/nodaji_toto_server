@@ -1,8 +1,10 @@
 package com.example.toto.service;
 
 import com.example.toto.domain.dto.request.BettingRequest;
+import com.example.toto.domain.dto.request.GameUpdateRequest;
 import com.example.toto.domain.dto.response.BettingResponse;
 import com.example.toto.domain.entity.Betting;
+import com.example.toto.domain.entity.BettingGame;
 import com.example.toto.domain.repository.BettingGameRepository;
 import com.example.toto.domain.repository.BettingRepository;
 import com.example.toto.domain.repository.GameRepository;
@@ -26,7 +28,7 @@ public class BettingServiceImpl implements BettingService{
     @Override
     public List<BettingResponse> findBettingsByUserId(String userIdToken) {
         UUID userId = UUID.fromString(jwtUtils.parseToken(userIdToken));
-        return bettingRepository.findByUserId(userId).stream().map(BettingResponse::from).toList();
+        return bettingRepository.findAllByUserId(userId).stream().map(BettingResponse::from).toList();
     }
 
     @Override
@@ -45,5 +47,23 @@ public class BettingServiceImpl implements BettingService{
     public void deleteBetting(Long bettingId) {
         bettingRepository.findById(bettingId).orElseThrow(() -> new NotFoundException("BETTING"));
         bettingRepository.deleteById(bettingId);
+    }
+
+    @Override
+    @Transactional
+    public void updateBettingResult(GameUpdateRequest req) {
+        List<BettingGame> byGameId = bettingGameRepository.findAllByGameId(req.gameId());
+        byGameId.forEach(betting -> {
+            betting.setBettingResult(betting.getTeamId().equals(req.gameId()) ? 2 : 1);
+            List<BettingGame> allByBettingId = bettingGameRepository.findAllByBettingId(betting.getBettingId().getBettingId());
+            List<BettingGame> filterByResult = allByBettingId.stream().filter(
+                            bettingGame -> bettingGame.getResult().equals(2)).toList();
+            if(allByBettingId.size() == filterByResult.size()) {
+                Betting targetBetting = bettingRepository.findById(betting.getBettingId().getBettingId()).orElseThrow();
+                UUID userId = targetBetting.getUserId();
+                // 메일발송
+                // 정산
+            }
+        });
     }
 }
