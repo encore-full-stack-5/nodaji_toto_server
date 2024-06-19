@@ -6,8 +6,6 @@ import com.example.toto.domain.entity.Game;
 import com.example.toto.domain.repository.GameRepository;
 import com.example.toto.service.BettingService;
 import com.example.toto.service.GameService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
