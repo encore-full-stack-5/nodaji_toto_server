@@ -5,15 +5,18 @@ import com.example.toto.domain.dto.request.GameUpdateRequest;
 import com.example.toto.domain.dto.response.BettingResponse;
 import com.example.toto.domain.entity.Betting;
 import com.example.toto.domain.entity.BettingGame;
+import com.example.toto.domain.entity.Game;
 import com.example.toto.domain.repository.BettingGameRepository;
 import com.example.toto.domain.repository.BettingRepository;
 import com.example.toto.domain.repository.GameRepository;
+import com.example.toto.exception.ExpiredBattingException;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.utils.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,9 +40,11 @@ public class BettingServiceImpl implements BettingService{
         Betting betting = req.toEntity(UUID.fromString(jwtUtils.parseToken(userIdToken)));
         bettingRepository.save(betting);
         bettingGameRepository.saveAll(req.bettingGames().stream()
-                .map(e -> e.toEntity(betting, gameRepository.findById(e.gameId())
-                        .orElseThrow(() -> new NotFoundException("GAME"))))
-                .toList());
+                .map(e -> {
+                    Game game = gameRepository.findById(e.gameId()).orElseThrow(() -> new NotFoundException("GAME"));
+                    if(game.getBetEndAt().isBefore(LocalDateTime.now())) throw new ExpiredBattingException();
+                    return e.toEntity(betting, game);
+                }).toList());
     }
 
     @Override
