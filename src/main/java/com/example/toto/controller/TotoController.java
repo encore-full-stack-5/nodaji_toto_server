@@ -25,15 +25,6 @@ public class TotoController {
     private final GameService gameService;
     private final GameRepository gameRepository; // for test simulation
 
-    @GetMapping("/test")
-    public String getToken() {
-        return Jwts.builder()
-                .subject("00000000-0000-0000-0000-000000000000")
-                .expiration(new Date(System.currentTimeMillis() + 3600000))
-                .signWith(Keys.hmacShaKeyFor("SecretKeyHereSecretKeyHereSecretKeyHereSecretKeyHere".getBytes()))
-                .compact();
-    }
-
     @PutMapping("/set-result")
     public void setResultGame(@RequestBody GameUpdateRequest request) {
         gameService.updateGameResult(List.of(request));
