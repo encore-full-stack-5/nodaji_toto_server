@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface GameRepository
@@ -16,7 +17,9 @@ public interface GameRepository
             "GAME_START_AT >= DATE(:date) " +
             "AND " +
             "GAME_START_AT <= DATE(:datePlusOne)", nativeQuery = true)
-    List<Game> findGamesByDate(@Param("date") LocalDate date, @Param("datePlusOne") LocalDate datePlusOne);
+    List<Game> findAllGamesByDate(
+            @Param("date") LocalDate date,
+            @Param("datePlusOne") LocalDate datePlusOne);
 
     @Query(value = "SELECT * FROM GAMES " +
             "WHERE " +
@@ -27,8 +30,10 @@ public interface GameRepository
             "(TEAM_HOME = :teamId " +
             "OR " +
             "TEAM_AWAY = :teamId)", nativeQuery = true)
-    List<Game> findGamesByDateAndTeam(
+    List<Game> findAllGamesByDateAndTeam(
             @Param("date") LocalDate date,
             @Param("datePlusOne") LocalDate datePlusOne,
             @Param("teamId")Long teamId);
+
+    List<Game> findAllGamesByGameResultAndGameStartAtBefore(Integer result, LocalDateTime startAt);
 }

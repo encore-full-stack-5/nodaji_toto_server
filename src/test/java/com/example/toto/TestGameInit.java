@@ -27,8 +27,8 @@ public class TestGameInit {
         secretKey = Keys.hmacShaKeyFor("SecretKeyHereSecretKeyHereSecretKeyHereSecretKeyHere".getBytes());
         game1 = new Game(
             1L,
-            LocalDateTime.of(2024,6,15,18,30),
-            LocalDateTime.of(2024,6,15,18,20),
+            LocalDateTime.now().plusMinutes(2),
+            LocalDateTime.now().plusMinutes(1),
             testTeamInit.teamA,
             testTeamInit.teamB,
             1.5f,
@@ -37,8 +37,8 @@ public class TestGameInit {
         );
         game2 = new Game(
                 2L,
-                LocalDateTime.of(2024,6,15,18,30),
-                LocalDateTime.of(2024,6,15,18,20),
+                LocalDateTime.now().plusMinutes(2),
+                LocalDateTime.now().plusMinutes(1),
                 testTeamInit.teamC,
                 testTeamInit.teamD,
                 1.1f,

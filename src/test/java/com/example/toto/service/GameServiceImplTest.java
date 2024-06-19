@@ -59,13 +59,13 @@ class GameServiceImplTest {
             List<Game> games = new ArrayList<>(List.of(
                     testGameInit.game1
             ));
-            BDDMockito.given(gameRepository.findGamesByDateAndTeam(date, date.plusDays(1), team)).willReturn(games);
+            BDDMockito.given(gameRepository.findAllGamesByDateAndTeam(date, date.plusDays(1), team)).willReturn(games);
 
             // when
             List<GameResponse> responses = gameService.getGamesByParam(date, team);
 
             // then
-            Mockito.verify(gameRepository, Mockito.times(1)).findGamesByDateAndTeam(date, date.plusDays(1), team);
+            Mockito.verify(gameRepository, Mockito.times(1)).findAllGamesByDateAndTeam(date, date.plusDays(1), team);
             assertEquals(1L, responses.get(0).teamHomeId());
         }
 
@@ -94,13 +94,13 @@ class GameServiceImplTest {
                             0
                     )
             ));
-            BDDMockito.given(gameRepository.findGamesByDate(LocalDate.now(), LocalDate.now().plusDays(1))).willReturn(games);
+            BDDMockito.given(gameRepository.findAllGamesByDate(LocalDate.now(), LocalDate.now().plusDays(1))).willReturn(games);
 
             // when
             List<GameResponse> responses = gameService.getGamesByParam(null, null);
 
             // then
-            Mockito.verify(gameRepository, Mockito.times(1)).findGamesByDate(LocalDate.now(), LocalDate.now().plusDays(1));
+            Mockito.verify(gameRepository, Mockito.times(1)).findAllGamesByDate(LocalDate.now(), LocalDate.now().plusDays(1));
             assertEquals(2, responses.size());
         }
 
@@ -111,13 +111,13 @@ class GameServiceImplTest {
             List<Game> games = new ArrayList<>(List.of(
                     testGameInit.game1
             ));
-            BDDMockito.given(gameRepository.findGamesByDate(date, date.plusDays(1))).willReturn(games);
+            BDDMockito.given(gameRepository.findAllGamesByDate(date, date.plusDays(1))).willReturn(games);
 
             // when
             List<GameResponse> responses = gameService.getGamesByParam(date, null);
 
             // then
-            Mockito.verify(gameRepository, Mockito.times(1)).findGamesByDate(date, date.plusDays(1));
+            Mockito.verify(gameRepository, Mockito.times(1)).findAllGamesByDate(date, date.plusDays(1));
             assertEquals(1L, responses.get(0).teamHomeId());
         }
 
@@ -137,13 +137,13 @@ class GameServiceImplTest {
                             0
                     )
             ));
-            BDDMockito.given(gameRepository.findGamesByDateAndTeam(LocalDate.now(), LocalDate.now().plusDays(1), team)).willReturn(games);
+            BDDMockito.given(gameRepository.findAllGamesByDateAndTeam(LocalDate.now(), LocalDate.now().plusDays(1), team)).willReturn(games);
 
             // when
             List<GameResponse> responses = gameService.getGamesByParam(LocalDate.now(), team);
 
             // then
-            Mockito.verify(gameRepository, Mockito.times(1)).findGamesByDateAndTeam(LocalDate.now(), LocalDate.now().plusDays(1), team);
+            Mockito.verify(gameRepository, Mockito.times(1)).findAllGamesByDateAndTeam(LocalDate.now(), LocalDate.now().plusDays(1), team);
             assertEquals(1L, responses.get(0).teamHomeId());
         }
     }

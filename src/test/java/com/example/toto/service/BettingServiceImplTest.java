@@ -56,13 +56,13 @@ class BettingServiceImplTest {
             BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
 
             List<BettingGame> bettingGames = new ArrayList<>(List.of(
-                    new BettingGame(1L, null, testGameInit.game1, 1L, 0),
-                    new BettingGame(2L, null, testGameInit.game2, 3L, 0)
+                    new BettingGame(1L, null, testGameInit.game1, 1, 0),
+                    new BettingGame(2L, null, testGameInit.game2, 2, 0)
             ));
             List<Betting> bettings = new ArrayList<>(List.of(
                     new Betting(1L, userId, 10000, LocalDateTime.now(), bettingGames)
             ));
-            BDDMockito.given(bettingRepository.findByUserId(userId)).willReturn(bettings);
+            BDDMockito.given(bettingRepository.findAllByUserId(userId)).willReturn(bettings);
 
 
             // when
@@ -70,10 +70,10 @@ class BettingServiceImplTest {
 
 
             //then
-            Mockito.verify(bettingRepository, Mockito.times(1)).findByUserId(userId);
+            Mockito.verify(bettingRepository, Mockito.times(1)).findAllByUserId(userId);
             assertEquals(10000, response.get(0).pointAmount());
-            assertEquals(1L, response.get(0).bettingGames().get(0).teamId());
-            assertEquals(3L, response.get(0).bettingGames().get(1).teamId());
+            assertEquals(1, response.get(0).bettingGames().get(0).team());
+            assertEquals(4, response.get(0).bettingGames().get(1).team());
         }
 
         @Test
@@ -82,7 +82,7 @@ class BettingServiceImplTest {
                 UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
                 String userIdToken = testGameInit.generateToken(userId, 1000);
                 BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
-                BDDMockito.given(bettingRepository.findByUserId(userId)).willReturn(new ArrayList<>());
+                BDDMockito.given(bettingRepository.findAllByUserId(userId)).willReturn(new ArrayList<>());
 
 
                 // when
@@ -90,7 +90,7 @@ class BettingServiceImplTest {
 
 
                 //then
-                Mockito.verify(bettingRepository, Mockito.times(1)).findByUserId(userId);
+                Mockito.verify(bettingRepository, Mockito.times(1)).findAllByUserId(userId);
                 assertTrue(response.isEmpty());
             }
 
@@ -107,7 +107,7 @@ class BettingServiceImplTest {
 
 
             //then
-            Mockito.verify(bettingRepository, Mockito.times(0)).findByUserId(userId);
+            Mockito.verify(bettingRepository, Mockito.times(0)).findAllByUserId(userId);
         }
     }
 
@@ -119,7 +119,7 @@ class BettingServiceImplTest {
             UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
             String userIdToken = testGameInit.generateToken(userId, 0);
             BettingRequest bettingRequest = new BettingRequest(10000,
-                    List.of(new BettingGameRequest(1L, 1L)));
+                    List.of(new BettingGameRequest(1L, 1)));
             BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
             BDDMockito.given(bettingRepository.save(any())).willReturn(null);
             BDDMockito.given(bettingGameRepository.saveAll(any())).willReturn(null);
@@ -139,7 +139,7 @@ class BettingServiceImplTest {
             UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
             String userIdToken = testGameInit.generateToken(userId, 0);
             BettingRequest bettingRequest = new BettingRequest(10000,
-                    List.of(new BettingGameRequest(1L, 1L)));
+                    List.of(new BettingGameRequest(1L, 1)));
             BDDMockito.given(jwtUtils.parseToken(userIdToken)).willThrow(ExpiredJwtException.class);
 
             // when
@@ -156,7 +156,7 @@ class BettingServiceImplTest {
             UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
             String userIdToken = testGameInit.generateToken(userId, 0);
             BettingRequest bettingRequest = new BettingRequest(10000,
-                    List.of(new BettingGameRequest(999L, 1L)));
+                    List.of(new BettingGameRequest(999L, 1)));
             BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
             BDDMockito.given(bettingRepository.save(any())).willReturn(null);
 
@@ -176,8 +176,8 @@ class BettingServiceImplTest {
             // give
             UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
             List<BettingGame> bettingGames = new ArrayList<>(List.of(
-                    new BettingGame(1L, null, testGameInit.game1, 1L, 0),
-                    new BettingGame(2L, null, testGameInit.game2, 3L, 0)
+                    new BettingGame(1L, null, testGameInit.game1, 1, 0),
+                    new BettingGame(2L, null, testGameInit.game2, 2, 0)
             ));
             Betting bettings = new Betting(1L, userId, 10000, LocalDateTime.now(), bettingGames);
             BDDMockito.given(bettingRepository.findById(1L)).willReturn(Optional.of(bettings));

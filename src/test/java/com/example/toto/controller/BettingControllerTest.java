@@ -110,8 +110,8 @@ class BettingControllerTest {
                     new BettingRequest(
                             10000,
                             List.of(
-                                    new BettingGameRequest(1L, 1L),
-                                    new BettingGameRequest(2L, 3L)
+                                    new BettingGameRequest(1L, 1),
+                                    new BettingGameRequest(2L, 2)
                             )
                     )
             );
@@ -131,8 +131,8 @@ class BettingControllerTest {
             BettingRequest bettingRequest = new BettingRequest(
                     10000,
                     List.of(
-                            new BettingGameRequest(1L, 1L),
-                            new BettingGameRequest(2L, 3L)
+                            new BettingGameRequest(1L, 1),
+                            new BettingGameRequest(2L, 2)
                     )
             );
             String request = objectMapper.writeValueAsString(bettingRequest);
@@ -155,8 +155,8 @@ class BettingControllerTest {
             BettingRequest bettingRequest = new BettingRequest(
                     10000,
                     List.of(
-                            new BettingGameRequest(1L, 1L),
-                            new BettingGameRequest(2L, 3L)
+                            new BettingGameRequest(1L, 1),
+                            new BettingGameRequest(2L, 2)
                     )
             );
             String request = objectMapper.writeValueAsString(bettingRequest);

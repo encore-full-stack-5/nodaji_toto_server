@@ -9,5 +9,5 @@ import java.util.UUID;
 public interface BettingRepository
         extends JpaRepository<Betting, Long> {
 
-    List<Betting> findByUserId(UUID userId);
+    List<Betting> findAllByUserId(UUID userId);
 }
