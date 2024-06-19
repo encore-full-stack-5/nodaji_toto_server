@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface GameRepository
@@ -33,4 +34,6 @@ public interface GameRepository
             @Param("date") LocalDate date,
             @Param("datePlusOne") LocalDate datePlusOne,
             @Param("teamId")Long teamId);
+
+    List<Game> findAllGamesByGameResultAndGameStartAtBefore(Integer result, LocalDateTime startAt);
 }
