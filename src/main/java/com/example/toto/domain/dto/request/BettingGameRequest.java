@@ -13,6 +13,7 @@ public record BettingGameRequest(
                 .bettingId(betting)
                 .game(game)
                 .teamId(teamId)
+                .result(0)
                 .build();
     }
 }
