@@ -59,7 +59,8 @@ public class BettingServiceImpl implements BettingService{
     public void updateBettingResult(GameUpdateRequest req) {
         List<BettingGame> byGameId = bettingGameRepository.findAllByGame_GameId(req.gameId());
         byGameId.forEach(betting -> {
-            betting.setBettingResult(betting.getTeamId().equals(req.gameId()) ? 2 : 1);
+            Game game = gameRepository.findById(req.gameId()).orElseThrow(() -> new NotFoundException("GAME"));
+            betting.setBettingResult(game.getGameResult());
             List<BettingGame> allByBettingId = bettingGameRepository.findAllByBettingId_BettingId(betting.getBettingId().getBettingId());
             List<BettingGame> filterByResult = allByBettingId.stream().filter(
                             bettingGame -> bettingGame.getResult().equals(2)).toList();

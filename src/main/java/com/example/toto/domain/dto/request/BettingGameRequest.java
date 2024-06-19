@@ -6,13 +6,13 @@ import com.example.toto.domain.entity.Game;
 
 public record BettingGameRequest(
         Long gameId,
-        Long teamId
+        Long team
 ) {
     public BettingGame toEntity(Betting betting, Game game) {
         return BettingGame.builder()
                 .bettingId(betting)
                 .game(game)
-                .teamId(teamId)
+                .team(team)
                 .result(0)
                 .build();
     }

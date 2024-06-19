@@ -24,8 +24,8 @@ public class BettingGame {
     @JoinColumn(name = "GAME_ID", nullable = false)
     private Game game;
 
-    @Column(name = "TEAM_ID", nullable = false)
-    private Long teamId;
+    @Column(name = "BETTING_TEAM", nullable = false)
+    private Long team;
 
     @Column(name = "BETTING_GAME_RESULT")
     private Integer result;
