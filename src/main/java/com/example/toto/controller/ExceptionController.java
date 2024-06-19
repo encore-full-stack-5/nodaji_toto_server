@@ -1,5 +1,6 @@
 package com.example.toto.controller;
 
+import com.example.toto.exception.ExpiredBattingException;
 import com.example.toto.exception.InvalidValueException;
 import com.example.toto.exception.NotFoundException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -27,5 +28,11 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String tokenExpiredException() {
         return "TOKEN EXPIRED";
+    }
+
+    @ExceptionHandler(ExpiredBattingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String expiredBattingException() {
+        return "EXPIRED BETTING";
     }
 }
