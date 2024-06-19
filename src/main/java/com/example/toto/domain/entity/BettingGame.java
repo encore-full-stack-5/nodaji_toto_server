@@ -27,7 +27,7 @@ public class BettingGame {
     @Column(name = "BETTING_TEAM", nullable = false)
     private Long team;
 
-    @Column(name = "BETTING_GAME_RESULT")
+    @Column(name = "BETTING_GAME_RESULT", nullable = false)
     private Integer result;
 
 

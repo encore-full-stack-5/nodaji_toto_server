@@ -38,7 +38,7 @@ public class Game {
     @Column(name = "GAME_RTP_AWAY", nullable = false)
     private Float rtpAway;
 
-    @Column(name = "GAME_RESULT")
+    @Column(name = "GAME_RESULT", nullable = false)
     private Integer gameResult;
 
 
