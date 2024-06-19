@@ -2,6 +2,8 @@ package com.example.toto.controller;
 
 import com.example.toto.domain.dto.request.GameRequest;
 import com.example.toto.domain.dto.request.GameUpdateRequest;
+import com.example.toto.domain.entity.Game;
+import com.example.toto.domain.repository.GameRepository;
 import com.example.toto.service.BettingService;
 import com.example.toto.service.GameService;
 import io.jsonwebtoken.Jwts;
@@ -21,6 +23,7 @@ import java.util.*;
 public class TotoController {
     private final BettingService bettingService;
     private final GameService gameService;
+    private final GameRepository gameRepository; // for test simulation
 
     @GetMapping("/test")
     public String getToken() {
@@ -37,8 +40,9 @@ public class TotoController {
         bettingService.updateBettingResult(request);
     }
 
-//    @GetMapping("/set")
-    @Scheduled(cron = "0 0/5 * * * *")
+    // test simulation method
+    @GetMapping("/set1")
+//    @Scheduled(cron = "0 0/2 * * * *")
     public void createGames() {
         Random rand = new Random();
         List<GameRequest> gameList = new ArrayList<>();
@@ -48,18 +52,39 @@ public class TotoController {
         }
 
         for (int i=0; i<3; i++) {
-            float rtp = rand.nextFloat(1);
-            float value = (float) Math.floor((Math.abs(rtp * 2 - 1) * 3 + 1) * 100) / 100;
+            float rtp = rand.nextFloat(0.8f)+0.1f;
             gameList.add(new GameRequest(
-                    LocalDateTime.now().withSecond(0).withNano(0).plusMinutes(5),
-                    LocalDateTime.now().withSecond(0).withNano(0).plusMinutes(4),
+                    LocalDateTime.now().withSecond(0).withNano(0).plusMinutes(2),
+                    LocalDateTime.now().withSecond(0).withNano(0).plusMinutes(1),
                     (long) teamOrder.get(i*2),
                     (long) teamOrder.get(i*2+1),
-                    (float) 1 + value * rtp,
-                    (float) 1 + value * (1-rtp)
+                    (float) Math.ceil(Math.pow((rtp * 1.6), 3) * 100) / 100 + 1,
+                    (float) Math.ceil(Math.pow(((1-rtp) * 1.6), 3) * 100) / 100 + 1
             ));
         }
 
         gameService.insertGame(gameList);
+    }
+
+    // test simulation method
+    @GetMapping("/set2")
+//    @Scheduled(cron = "0 0/2 * * * *")
+    public void resultGames() {
+        List<Game> allGamesByResult = gameRepository.findAllGamesByGameResultAndGameStartAtBefore(0, LocalDateTime.now());
+        allGamesByResult.forEach(e -> {
+                    double rand = new Random().nextDouble(1.1);
+                    int result; // 1:홈팀승, 2:원정팀승, 3:무승부, 4:경기취소
+                    if(rand > 1.07) {
+                        result = 4;
+                    } else if(rand > 1) {
+                        result = 3;
+                    } else {
+                        result = Math.cbrt(e.getRtpHome() - 1) / 1.6 < rand ? 1 : 2;
+                    }
+                    GameUpdateRequest gameUpdateRequest = new GameUpdateRequest(e.getGameId(), result);
+                    gameService.updateGameResult(List.of(gameUpdateRequest));
+                    bettingService.updateBettingResult(gameUpdateRequest);
+                }
+        );
     }
 }
