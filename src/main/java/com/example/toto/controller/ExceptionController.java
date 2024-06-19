@@ -27,7 +27,7 @@ public class ExceptionController {
     @ExceptionHandler(ExpiredJwtException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String tokenExpiredException() {
-        return "TOKEN EXPIRED";
+        return "EXPIRED TOKEN";
     }
 
     @ExceptionHandler(ExpiredBattingException.class)
