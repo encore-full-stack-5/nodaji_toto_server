@@ -55,7 +55,11 @@ jacocoTestCoverageVerification{
 		}
 		rule {
 			element = 'CLASS'
-			includes = ['com.example.test_back.*.**']
+			includes = [
+					'com.example.toto.controller.BettingController',
+					'com.example.toto.controller.GameController',
+					'com.example.toto.service.**'
+			]
 			limit {
 				value = 'COVEREDRATIO'
 				minimum = 0.8

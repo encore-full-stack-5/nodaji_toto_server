@@ -1,17 +1,22 @@
 package com.example.toto.service;
 
 import com.example.toto.domain.dto.request.BettingRequest;
+import com.example.toto.domain.dto.request.GameUpdateRequest;
 import com.example.toto.domain.dto.response.BettingResponse;
 import com.example.toto.domain.entity.Betting;
+import com.example.toto.domain.entity.BettingGame;
+import com.example.toto.domain.entity.Game;
 import com.example.toto.domain.repository.BettingGameRepository;
 import com.example.toto.domain.repository.BettingRepository;
 import com.example.toto.domain.repository.GameRepository;
+import com.example.toto.exception.ExpiredBattingException;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.utils.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +31,7 @@ public class BettingServiceImpl implements BettingService{
     @Override
     public List<BettingResponse> findBettingsByUserId(String userIdToken) {
         UUID userId = UUID.fromString(jwtUtils.parseToken(userIdToken));
-        return bettingRepository.findByUserId(userId).stream().map(BettingResponse::from).toList();
+        return bettingRepository.findAllByUserId(userId).stream().map(BettingResponse::from).toList();
     }
 
     @Override
@@ -35,9 +40,11 @@ public class BettingServiceImpl implements BettingService{
         Betting betting = req.toEntity(UUID.fromString(jwtUtils.parseToken(userIdToken)));
         bettingRepository.save(betting);
         bettingGameRepository.saveAll(req.bettingGames().stream()
-                .map(e -> e.toEntity(betting, gameRepository.findById(e.gameId())
-                        .orElseThrow(() -> new NotFoundException("GAME"))))
-                .toList());
+                .map(e -> {
+                    Game game = gameRepository.findById(e.gameId()).orElseThrow(() -> new NotFoundException("GAME"));
+                    if(game.getBetEndAt().isBefore(LocalDateTime.now())) throw new ExpiredBattingException();
+                    return e.toEntity(betting, game);
+                }).toList());
     }
 
     @Override
@@ -45,5 +52,24 @@ public class BettingServiceImpl implements BettingService{
     public void deleteBetting(Long bettingId) {
         bettingRepository.findById(bettingId).orElseThrow(() -> new NotFoundException("BETTING"));
         bettingRepository.deleteById(bettingId);
+    }
+
+    @Override
+    @Transactional
+    public void updateBettingResult(GameUpdateRequest req) {
+        List<BettingGame> byGameId = bettingGameRepository.findAllByGame_GameId(req.gameId());
+        byGameId.forEach(betting -> {
+            Game game = gameRepository.findById(req.gameId()).orElseThrow(() -> new NotFoundException("GAME"));
+            betting.setBettingResult(game.getGameResult());
+            List<BettingGame> allByBettingId = bettingGameRepository.findAllByBettingId_BettingId(betting.getBettingId().getBettingId());
+            List<BettingGame> filterByResult = allByBettingId.stream().filter(
+                            bettingGame -> bettingGame.getResult().equals(2)).toList();
+            if(allByBettingId.size() == filterByResult.size()) {
+                Betting targetBetting = bettingRepository.findById(betting.getBettingId().getBettingId()).orElseThrow();
+                UUID userId = targetBetting.getUserId();
+                // 메일발송
+                // 정산
+            }
+        });
     }
 }
