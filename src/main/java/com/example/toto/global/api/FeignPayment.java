@@ -14,17 +14,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface FeignPayment {
 
     @GetMapping("/api/v1/accounts/{userId}")
-    UserPointResponse getPointByUserId(@PathVariable String userId);
+    UserPointResponse getPointByUserId(@PathVariable("userId") String userId);
 
     @PostMapping("/api/v1/payments/{userId}")
     UserPaymentResponse payTotoByUser(
-            @PathVariable String userId,
+            @PathVariable("userId") String userId,
             @RequestBody UserPaymentRequest req
     );
 
     @PostMapping("/api/v1/win/{userId}")
     void sendWinUser(
-            @PathVariable String userId,
+            @PathVariable("userId") String userId,
             @RequestBody UserWinRequest req
     );
 }
