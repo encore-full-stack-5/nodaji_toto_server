@@ -2,6 +2,7 @@ package com.example.toto.service;
 
 import com.example.toto.domain.dto.request.GameRequest;
 import com.example.toto.domain.dto.request.GameUpdateRequest;
+import com.example.toto.domain.dto.response.GameDetailResponse;
 import com.example.toto.domain.dto.response.GameResponse;
 import com.example.toto.domain.entity.Game;
 import com.example.toto.domain.repository.GameRepository;
@@ -29,6 +30,17 @@ public class GameServiceImpl implements GameService {
                 .stream().map(GameResponse::from).toList();
         return gameRepository.findAllGamesByDateAndTeam(date, date.plusDays(1), team)
                 .stream().map(GameResponse::from).toList();
+    }
+
+    @Override
+    public List<GameDetailResponse> getGameDetailsById(Long gameId) {
+        Game game = gameRepository.findById(gameId).orElseThrow(() -> new NotFoundException(("GAME")));
+        return game.getTeamHome().getHomeGame().stream()
+                .filter(e ->
+                        e.getTeamAway() == game.getTeamAway() &&
+                        e.getGameResult() != 0)
+                .map(GameDetailResponse::from)
+                .toList();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.example.toto.controller;
 
 import com.example.toto.domain.dto.request.GameRequest;
 import com.example.toto.domain.dto.request.GameUpdateRequest;
+import com.example.toto.domain.dto.response.GameDetailResponse;
 import com.example.toto.domain.dto.response.GameResponse;
 import com.example.toto.service.GameService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,10 @@ public class GameController {
         return date == null
                 ? gameService.getGamesByParam(LocalDate.now(), team)
                 : gameService.getGamesByParam(date, team);
+    }
+    @GetMapping("/{gameId}")
+    public List<GameDetailResponse> getGameResults(@PathVariable Long gameId) {
+        return gameService.getGameDetailsById(gameId);
     }
 
     @PostMapping
