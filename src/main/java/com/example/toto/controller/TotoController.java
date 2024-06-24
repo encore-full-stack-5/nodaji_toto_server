@@ -33,14 +33,15 @@ public class TotoController {
     @GetMapping("/set1")
 //    @Scheduled(cron = "0 0/2 * * * *")
     public void createGames() {
+        int teamNum = 14;
         Random rand = new Random();
         List<GameRequest> gameList = new ArrayList<>();
         Map<Integer, Integer> teamOrder = new HashMap<>();
-        while(teamOrder.size() < 6) {
-            teamOrder.putIfAbsent(rand.nextInt(6), teamOrder.size()+1);
+        while(teamOrder.size() < teamNum) {
+            teamOrder.putIfAbsent(rand.nextInt(teamNum), teamOrder.size()+1);
         }
 
-        for (int i=0; i<3; i++) {
+        for (int i=0; i<teamNum/2; i++) {
             float rtp = rand.nextFloat(0.8f)+0.1f;
             gameList.add(new GameRequest(
                     LocalDateTime.now().withSecond(0).withNano(0).plusMinutes(2),
