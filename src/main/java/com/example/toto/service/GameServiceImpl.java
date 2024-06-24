@@ -3,6 +3,7 @@ package com.example.toto.service;
 import com.example.toto.domain.dto.request.GameRequest;
 import com.example.toto.domain.dto.request.GameUpdateRequest;
 import com.example.toto.domain.dto.response.GameDetailResponse;
+import com.example.toto.domain.dto.response.GamePageResponse;
 import com.example.toto.domain.dto.response.GameResponse;
 import com.example.toto.domain.entity.Game;
 import com.example.toto.domain.repository.GameRepository;
@@ -11,10 +12,14 @@ import com.example.toto.exception.NotFoundException;
 import com.example.toto.utils.ResultValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +29,20 @@ public class GameServiceImpl implements GameService {
     private final ResultValidationUtils resultValidationUtils;
 
     @Override
-    public List<GameResponse> getGamesByParam(LocalDate date, Long team) {
+    public GamePageResponse getGamesByParam(LocalDate date, Long team, Integer page, Integer pageSize) {
         if(date == null) date = LocalDate.now();
-        if(team == null) return gameRepository.findAllGamesByDate(date, date.plusDays(1))
-                .stream().map(GameResponse::from).toList();
-        return gameRepository.findAllGamesByDateAndTeam(date, date.plusDays(1), team)
-                .stream().map(GameResponse::from).toList();
+        Page<Game> content;
+        if(team == null) {
+            content = gameRepository.findAllGamesByDate(date, date.plusDays(1), PageRequest.of(page, pageSize));
+        } else {
+            content = gameRepository.findAllGamesByDateAndTeam(date, date.plusDays(1), team, PageRequest.of(page, pageSize));
+        }
+        Map<String, Object> pageInfo = new HashMap<>();
+        pageInfo.put("page", page);
+        pageInfo.put("size", pageSize);
+        pageInfo.put("totalElements", content.getTotalElements());
+        pageInfo.put("totalPages", content.getTotalPages());
+        return new GamePageResponse(pageInfo, content.stream().map(GameResponse::from).toList());
     }
 
     @Override
