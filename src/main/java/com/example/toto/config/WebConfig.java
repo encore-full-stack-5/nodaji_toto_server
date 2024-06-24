@@ -23,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:5173", frontAddr, paymentAddr)
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedHeaders("Authorization")
+                .allowedHeaders("Authorization", "content-type")
                 .exposedHeaders("Custom-Header")
                 .maxAge(5000);
     }
