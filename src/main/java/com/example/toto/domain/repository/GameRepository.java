@@ -20,9 +20,9 @@ public interface GameRepository
             "AND " +
             "GAME_START_AT <= DATE(:datePlusOne)", nativeQuery = true)
     Page<Game> findAllGamesByDate(
+            Pageable pageable,
             @Param("date") LocalDate date,
-            @Param("datePlusOne") LocalDate datePlusOne,
-            Pageable pageable);
+            @Param("datePlusOne") LocalDate datePlusOne);
 
     @Query(value = "SELECT * FROM GAMES " +
             "WHERE " +
@@ -34,10 +34,10 @@ public interface GameRepository
             "OR " +
             "TEAM_AWAY = :teamId)", nativeQuery = true)
     Page<Game> findAllGamesByDateAndTeam(
+            Pageable pageable,
             @Param("date") LocalDate date,
             @Param("datePlusOne") LocalDate datePlusOne,
-            @Param("teamId")Long teamId,
-            Pageable pageable);
+            @Param("teamId")Long teamId);
 
     List<Game> findAllGamesByGameResultAndGameStartAtBefore(Integer result, LocalDateTime startAt);
 }

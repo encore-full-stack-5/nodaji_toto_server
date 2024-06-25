@@ -33,9 +33,11 @@ public class GameServiceImpl implements GameService {
         if(date == null) date = LocalDate.now();
         Page<Game> content;
         if(team == null) {
-            content = gameRepository.findAllGamesByDate(date, date.plusDays(1), PageRequest.of(page, pageSize));
+            content = gameRepository.findAllGamesByDate(
+                    PageRequest.of(page, pageSize), date, date.plusDays(1));
         } else {
-            content = gameRepository.findAllGamesByDateAndTeam(date, date.plusDays(1), team, PageRequest.of(page, pageSize));
+            content = gameRepository.findAllGamesByDateAndTeam(
+                    PageRequest.of(page, pageSize), date, date.plusDays(1), team);
         }
         Map<String, Object> pageInfo = new HashMap<>();
         pageInfo.put("page", page);

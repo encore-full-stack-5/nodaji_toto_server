@@ -59,11 +59,13 @@ public class BettingServiceImpl implements BettingService{
     public void updateBettingResult(GameUpdateRequest req) {
         List<BettingGame> byGameId = bettingGameRepository.findAllByGame_GameId(req.gameId());
         byGameId.forEach(betting -> {
-            Game game = gameRepository.findById(req.gameId()).orElseThrow(() -> new NotFoundException("GAME"));
-            betting.setBettingResult(game.getGameResult());
-            List<BettingGame> allByBettingId = bettingGameRepository.findAllByBettingId_BettingId(betting.getBettingId().getBettingId());
-            List<BettingGame> filterByResult = allByBettingId.stream().filter(
-                            bettingGame -> bettingGame.getResult().equals(2)).toList();
+//            Game game = gameRepository.findById(req.gameId()).orElseThrow(() -> new NotFoundException("GAME"));
+//            betting.setBettingResult(game.getGameResult());
+            betting.setBettingResult(req.result());
+            List<BettingGame> allByBettingId =
+                    bettingGameRepository.findAllByBettingId_BettingId(betting.getBettingId().getBettingId());
+            List<BettingGame> filterByResult =
+                    allByBettingId.stream().filter(bettingGame -> bettingGame.getResult().equals(2)).toList();
             if(allByBettingId.size() == filterByResult.size()) {
                 Betting targetBetting = bettingRepository.findById(betting.getBettingId().getBettingId()).orElseThrow();
                 UUID userId = targetBetting.getUserId();
