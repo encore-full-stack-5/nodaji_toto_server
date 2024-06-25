@@ -11,10 +11,10 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-#  kafka:
-#    bootstrap-servers: localhost:9092
-#    producer:
-#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  kafka:
+    bootstrap-servers: 192.168.0.20:9092
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 token:
   secret: SecretKeyHereSecretKeyHereSecretKeyHereSecretKeyHere
 address:
