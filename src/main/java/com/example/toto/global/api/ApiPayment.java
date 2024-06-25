@@ -7,6 +7,8 @@ import com.example.toto.global.dto.response.UserPointResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
 public class ApiPayment {
@@ -16,11 +18,11 @@ public class ApiPayment {
         return feignPayment.getPointByUserId(userId);
     }
 
-    public UserPaymentResponse payTotoByUser(String userId, UserPaymentRequest req) {
-        return feignPayment.payTotoByUser(userId, req);
+    public UserPaymentResponse payTotoByUser(UUID userId, Integer amount) {
+        return feignPayment.payTotoByUser(userId, UserPaymentRequest.from(amount));
     }
 
-    public void sendWinUser(String userId, UserWinRequest req) {
-        feignPayment.sendWinUser(userId, req);
+    public void sendWinUser(UUID userId, Integer amount) {
+        feignPayment.sendWinUser(userId, UserWinRequest.from(amount));
     }
 }
