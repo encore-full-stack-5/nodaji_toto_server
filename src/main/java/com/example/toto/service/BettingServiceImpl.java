@@ -5,8 +5,6 @@ import com.example.toto.domain.dto.request.GameUpdateRequest;
 import com.example.toto.domain.dto.response.BettingResponse;
 import com.example.toto.domain.entity.Betting;
 import com.example.toto.domain.entity.BettingGame;
-import com.example.toto.domain.entity.Game;
-import com.example.toto.domain.repository.BettingGameRepository;
 import com.example.toto.domain.repository.BettingRepository;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.global.api.ApiPayment;
@@ -22,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BettingServiceImpl implements BettingService{
     private final BettingRepository bettingRepository;
-    private final BettingGameRepository bettingGameRepository;
+    private final BettingGameService bettingGameService;
     private final ApiPayment apiPayment;
     private final JwtUtils jwtUtils;
 
@@ -40,8 +38,7 @@ public class BettingServiceImpl implements BettingService{
 //        System.out.println(status);
         Betting betting = req.toEntity(uuid);
         bettingRepository.save(betting);
-        bettingGameRepository.saveAll(req.bettingGames().stream()
-                .map(e -> e.toEntity(betting, Game.builder().gameId(e.gameId()).build())).toList());
+        bettingGameService.saveAllByBetting(req.bettingGames(), betting);
     }
 
     @Override
@@ -54,10 +51,10 @@ public class BettingServiceImpl implements BettingService{
     @Override
     @Transactional
     public void updateBettingResult(GameUpdateRequest req) {
-        List<BettingGame> allBettingGamesByGame = bettingGameRepository.findAllByGame_GameId(req.gameId());
+        List<BettingGame> allBettingGamesByGame = bettingGameService.findAllByGameId(req.gameId());
         allBettingGamesByGame.forEach(bettingGame -> {
             bettingGame.setBettingResult(req.result());
-            List<BettingGame> allBettingGamesByBetting = bettingGameRepository.findAllByBettingId_BettingId(bettingGame.getBettingId().getBettingId());
+            List<BettingGame> allBettingGamesByBetting = bettingGameService.findAllByBettingId(bettingGame.getBettingId().getBettingId());
             int filterResult = allBettingGamesByBetting.stream().filter(e -> e.getTeam().equals(e.getResult()) || e.getResult() > 2).toList().size();
             if(allBettingGamesByBetting.size() == filterResult) {
                 float rtp = 1f;

@@ -7,7 +7,6 @@ import com.example.toto.domain.dto.response.GamePageResponse;
 import com.example.toto.domain.dto.response.GameResponse;
 import com.example.toto.domain.entity.Game;
 import com.example.toto.domain.repository.GameRepository;
-import com.example.toto.domain.repository.TeamRepository;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.utils.ResultValidationUtils;
 import jakarta.transaction.Transactional;
@@ -25,7 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class GameServiceImpl implements GameService {
     private final GameRepository gameRepository;
-    private final TeamRepository teamRepository;
+    private final TeamService teamService;
     private final ResultValidationUtils resultValidationUtils;
 
     @Override
@@ -62,8 +61,8 @@ public class GameServiceImpl implements GameService {
     @Transactional
     public void insertGame(List<GameRequest> req) {
         List<Game> gameList = req.stream().map(e -> e.toEntity(
-                teamRepository.findById(e.teamHome()).orElseThrow(() -> new NotFoundException("TEAM")),
-                teamRepository.findById(e.teamAway()).orElseThrow(() -> new NotFoundException("TEAM"))
+                teamService.findById(e.teamHome()),
+                teamService.findById(e.teamAway())
         )).toList();
         gameRepository.saveAll(gameList);
     }
