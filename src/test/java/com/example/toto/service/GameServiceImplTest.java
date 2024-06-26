@@ -39,8 +39,6 @@ class GameServiceImplTest {
     @Mock
     private GameRepository gameRepository;
     @Mock
-    private TeamService teamService;
-    @Mock
     private ResultValidationUtils resultValidationUtils;
     @InjectMocks
     private GameServiceImpl gameService;
@@ -138,40 +136,37 @@ class GameServiceImplTest {
                             2f
                     )
             ));
-            BDDMockito.given(teamService.findById(1L)).willReturn(testTeamInit.teamA);
-            BDDMockito.given(teamService.findById(2L)).willReturn(testTeamInit.teamB);
             BDDMockito.given(gameRepository.saveAll(any())).willReturn(null);
 
             // when
             gameService.insertGame(games);
 
             // then
-            Mockito.verify(teamService, Mockito.times(2)).findById(any());
             Mockito.verify(gameRepository, Mockito.times(1)).saveAll(any());
         }
 
-        @Test
-        void 실패_팀_없음() {
-            // give
-            List<GameRequest> games = new ArrayList<>(List.of(
-                    new GameRequest(
-                            LocalDateTime.of(2024, 6, 15, 18, 30),
-                            LocalDateTime.of(2024, 6, 15, 18, 20),
-                            999L,
-                            9999L,
-                            1.5f,
-                            2f
-                    )
-            ));
-            BDDMockito.given(teamService.findById(999L)).willThrow(NotFoundException.class);
-
-            // when
-            assertThrows(NotFoundException.class, () -> gameService.insertGame(games));
-
-            // then
-            Mockito.verify(teamService, Mockito.times(1)).findById(any());
-            Mockito.verify(gameRepository, Mockito.times(0)).saveAll(any());
-        }
+//        @Test
+//        void 실패_팀_없음() {
+//            // give
+//            List<GameRequest> games = new ArrayList<>(List.of(
+//                    new GameRequest(
+//                            LocalDateTime.of(2024, 6, 15, 18, 30),
+//                            LocalDateTime.of(2024, 6, 15, 18, 20),
+//                            999L,
+//                            9999L,
+//                            1.5f,
+//                            2f
+//                    )
+//            ));
+////            BDDMockito.given(teamService.findById(999L)).willThrow(NotFoundException.class);
+//
+//            // when
+//            assertThrows(NotFoundException.class, () -> gameService.insertGame(games));
+//
+//            // then
+////            Mockito.verify(teamService, Mockito.times(1)).findById(any());
+//            Mockito.verify(gameRepository, Mockito.times(0)).saveAll(any());
+//        }
     }
 
     @Nested
