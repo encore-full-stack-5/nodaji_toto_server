@@ -28,6 +28,7 @@ public class GameController {
                 ? gameService.getGamesByParam(LocalDate.now(), team, page, 10)
                 : gameService.getGamesByParam(date, team, page, 10);
     }
+
     @GetMapping("/{gameId}")
     public List<GameDetailResponse> getGameResults(@PathVariable Long gameId) {
         return gameService.getGameDetailsById(gameId);
