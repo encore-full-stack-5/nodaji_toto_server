@@ -6,10 +6,8 @@ import com.example.toto.TestTeamInit;
 import com.example.toto.domain.dto.request.GameRequest;
 import com.example.toto.domain.dto.request.GameUpdateRequest;
 import com.example.toto.domain.dto.response.GamePageResponse;
-import com.example.toto.domain.dto.response.GameResponse;
 import com.example.toto.domain.entity.Game;
 import com.example.toto.domain.repository.GameRepository;
-import com.example.toto.domain.repository.TeamRepository;
 import com.example.toto.exception.InvalidValueException;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.utils.ResultValidationUtils;
@@ -28,7 +26,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

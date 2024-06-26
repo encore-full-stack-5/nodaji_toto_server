@@ -72,7 +72,6 @@ class GameControllerTest {
         @Test
         void 성공_파라미터_팀_없음() throws Exception {
             LocalDate date = LocalDate.of(2024, 6, 15);
-            Long team = 1L;
             BDDMockito.given(gameService.getGamesByParam(date, null, 0, 10))
                     .willReturn(testGameResInit.gamePageRes);
 
