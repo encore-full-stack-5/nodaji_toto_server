@@ -10,7 +10,7 @@ public record BettingGameResponse(
         String teamHome,
         String teamAway,
         Float gameRtp,
-        Long team,
+        Integer team,
         Integer result
 ) {
     public static BettingGameResponse from(BettingGame bettingGame) {
@@ -22,9 +22,7 @@ public record BettingGameResponse(
                 bettingGame.getTeam() == 1
                         ? bettingGame.getGame().getRtpHome()
                         : bettingGame.getGame().getRtpAway(),
-                bettingGame.getTeam() == 1
-                        ? bettingGame.getGame().getTeamHome().getTeamId()
-                        : bettingGame.getGame().getTeamAway().getTeamId(),
+                bettingGame.getTeam(),
                 bettingGame.getResult()
         );
     }
