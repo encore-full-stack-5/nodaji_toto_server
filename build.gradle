@@ -64,7 +64,7 @@ jacocoTestCoverageVerification{
 			limit {
 				counter = 'LINE'
 				value = 'TOTALCOUNT'
-				maximum = 200
+				maximum = 100
 			}
 		}
 		rule {
