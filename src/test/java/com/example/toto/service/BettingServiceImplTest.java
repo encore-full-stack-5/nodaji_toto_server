@@ -24,12 +24,15 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
 class BettingServiceImplTest {
     @Mock
     private BettingRepository bettingRepository;
+    @Mock
+    private BettingGameService bettingGameService;
     @Mock
     private JwtUtils jwtUtils;
     @InjectMocks
@@ -112,16 +115,19 @@ class BettingServiceImplTest {
             // give
             UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
             String userIdToken = testGameInit.generateToken(userId, 0);
-            BettingRequest bettingRequest = new BettingRequest(10000,
+            BettingRequest bettingRequest = new BettingRequest(
+                    10000,
                     List.of(new BettingGameRequest(1L, 1)));
             BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
             BDDMockito.given(bettingRepository.save(any())).willReturn(null);
+            doNothing().when(bettingGameService).saveAllByBetting(eq(bettingRequest.bettingGames()), any());
 
             // when
             bettingService.insertBetting(userIdToken, bettingRequest);
 
             //then
             Mockito.verify(bettingRepository, Mockito.times(1)).save(any());
+            Mockito.verify(bettingGameService, Mockito.times(1)).saveAllByBetting(eq(bettingRequest.bettingGames()), any());
         }
 
         @Test
