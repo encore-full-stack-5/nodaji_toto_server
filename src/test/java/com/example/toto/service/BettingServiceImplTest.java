@@ -33,9 +33,7 @@ class BettingServiceImplTest {
     @Mock
     private BettingRepository bettingRepository;
     @Mock
-    private BettingGameRepository bettingGameRepository;
-    @Mock
-    private GameRepository gameRepository;
+    private BettingGameService bettingGameService;
     @Mock
     private JwtUtils jwtUtils;
     @InjectMocks
@@ -122,15 +120,12 @@ class BettingServiceImplTest {
                     List.of(new BettingGameRequest(1L, 1)));
             BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
             BDDMockito.given(bettingRepository.save(any())).willReturn(null);
-            BDDMockito.given(bettingGameRepository.saveAll(any())).willReturn(null);
-            BDDMockito.given(gameRepository.findById(1L)).willReturn(Optional.of(testGameInit.game1));
 
             // when
             bettingService.insertBetting(userIdToken, bettingRequest);
 
             //then
             Mockito.verify(bettingRepository, Mockito.times(1)).save(any());
-            Mockito.verify(bettingGameRepository, Mockito.times(1)).saveAll(any());
         }
 
         @Test
@@ -147,25 +142,6 @@ class BettingServiceImplTest {
 
             //then
             Mockito.verify(bettingRepository, Mockito.times(0)).save(any());
-            Mockito.verify(bettingGameRepository, Mockito.times(0)).saveAll(any());
-        }
-
-        @Test
-        void 실패_게임_없음(){
-            // give
-            UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
-            String userIdToken = testGameInit.generateToken(userId, 0);
-            BettingRequest bettingRequest = new BettingRequest(10000,
-                    List.of(new BettingGameRequest(999L, 1)));
-            BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
-            BDDMockito.given(bettingRepository.save(any())).willReturn(null);
-
-            // when
-            assertThrows(NotFoundException.class, () -> bettingService.insertBetting(userIdToken, bettingRequest));
-
-            //then
-            Mockito.verify(bettingRepository, Mockito.times(1)).save(any());
-            Mockito.verify(bettingGameRepository, Mockito.times(0)).saveAll(any());
         }
     }
 

@@ -1,9 +1,11 @@
 package com.example.toto.service;
 
 import com.example.toto.TestGameInit;
+import com.example.toto.TestGameResInit;
 import com.example.toto.TestTeamInit;
 import com.example.toto.domain.dto.request.GameRequest;
 import com.example.toto.domain.dto.request.GameUpdateRequest;
+import com.example.toto.domain.dto.response.GamePageResponse;
 import com.example.toto.domain.dto.response.GameResponse;
 import com.example.toto.domain.entity.Game;
 import com.example.toto.domain.repository.GameRepository;
@@ -19,6 +21,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,7 +42,7 @@ class GameServiceImplTest {
     @Mock
     private GameRepository gameRepository;
     @Mock
-    private TeamRepository teamRepository;
+    private TeamService teamService;
     @Mock
     private ResultValidationUtils resultValidationUtils;
     @InjectMocks
@@ -44,9 +50,11 @@ class GameServiceImplTest {
 
     protected final TestTeamInit testTeamInit;
     protected final TestGameInit testGameInit;
+    protected final TestGameResInit testGameResInit;
     GameServiceImplTest() {
         this.testTeamInit = new TestTeamInit();
         this.testGameInit = new TestGameInit();
+        this.testGameResInit = new TestGameResInit();
     }
 
     @Nested
@@ -56,95 +64,65 @@ class GameServiceImplTest {
             // give
             LocalDate date = LocalDate.of(2024, 6, 15);
             Long team = 1L;
-            List<Game> games = new ArrayList<>(List.of(
-                    testGameInit.game1
-            ));
-            BDDMockito.given(gameRepository.findAllGamesByDateAndTeam(date, date.plusDays(1), team)).willReturn(games);
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Game> games = new PageImpl<>(List.of(testGameInit.game1), pageable, 1);
+            BDDMockito.given(gameRepository.findAllGamesByDateAndTeam(pageable, date, date.plusDays(1), team)).willReturn(games);
 
             // when
-            List<GameResponse> responses = gameService.getGamesByParam(date, team);
+            GamePageResponse responses = gameService.getGamesByParam(date, team, 0, 10);
 
             // then
-            Mockito.verify(gameRepository, Mockito.times(1)).findAllGamesByDateAndTeam(date, date.plusDays(1), team);
-            assertEquals(1L, responses.get(0).teamHomeId());
+            Mockito.verify(gameRepository, Mockito.times(1)).findAllGamesByDateAndTeam(pageable, date, date.plusDays(1), team);
+            assertEquals(1L, responses.content().get(0).teamHomeId());
         }
 
         @Test
         void 성공_파라미터_모두_없음() {
             // give
-            List<Game> games = new ArrayList<>(List.of(
-                    new Game(
-                            1L,
-                            LocalDate.now().atTime(LocalTime.of(18, 30)),
-                            LocalDate.now().atTime(LocalTime.of(18, 20)),
-                            testTeamInit.teamA,
-                            testTeamInit.teamB,
-                            1.5f,
-                            2f,
-                            0
-                    ),
-                    new Game(
-                            2L,
-                            LocalDate.now().atTime(LocalTime.of(18, 30)),
-                            LocalDate.now().atTime(LocalTime.of(18, 20)),
-                            testTeamInit.teamC,
-                            testTeamInit.teamD,
-                            4f,
-                            1.1f,
-                            0
-                    )
-            ));
-            BDDMockito.given(gameRepository.findAllGamesByDate(LocalDate.now(), LocalDate.now().plusDays(1))).willReturn(games);
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Game> games = new PageImpl<>(List.of(testGameInit.game1,testGameInit.game2), pageable, 2);
+            BDDMockito.given(gameRepository.findAllGamesByDate(pageable, LocalDate.now(), LocalDate.now().plusDays(1))).willReturn(games);
 
             // when
-            List<GameResponse> responses = gameService.getGamesByParam(null, null);
+            GamePageResponse responses = gameService.getGamesByParam(null, null, 0, 10);
 
             // then
-            Mockito.verify(gameRepository, Mockito.times(1)).findAllGamesByDate(LocalDate.now(), LocalDate.now().plusDays(1));
-            assertEquals(2, responses.size());
+            Mockito.verify(gameRepository, Mockito.times(1)).findAllGamesByDate(pageable, LocalDate.now(), LocalDate.now().plusDays(1));
+            assertEquals(2, responses.content().size());
+            assertEquals(2L, responses.pageInfo().get("totalElements"));
         }
 
         @Test
         void 성공_파라미터_팀_없음() {
             // give
             LocalDate date = LocalDate.of(2024, 6, 15);
-            List<Game> games = new ArrayList<>(List.of(
-                    testGameInit.game1
-            ));
-            BDDMockito.given(gameRepository.findAllGamesByDate(date, date.plusDays(1))).willReturn(games);
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Game> games = new PageImpl<>(List.of(testGameInit.game1), pageable, 2);
+            BDDMockito.given(gameRepository.findAllGamesByDate(pageable, date, date.plusDays(1))).willReturn(games);
 
             // when
-            List<GameResponse> responses = gameService.getGamesByParam(date, null);
+
+            GamePageResponse responses = gameService.getGamesByParam(date, null, 0, 10);
 
             // then
-            Mockito.verify(gameRepository, Mockito.times(1)).findAllGamesByDate(date, date.plusDays(1));
-            assertEquals(1L, responses.get(0).teamHomeId());
+            Mockito.verify(gameRepository, Mockito.times(1)).findAllGamesByDate(pageable, date, date.plusDays(1));
+            assertEquals(1L, responses.content().get(0).teamHomeId());
         }
 
         @Test
         void 성공_파라미터_날짜_없음() {
             // give
             Long team = 1L;
-            List<Game> games = new ArrayList<>(List.of(
-                    new Game(
-                            1L,
-                            LocalDate.now().atTime(LocalTime.of(18, 30)),
-                            LocalDate.now().atTime(LocalTime.of(18, 20)),
-                            testTeamInit.teamA,
-                            testTeamInit.teamB,
-                            1.5f,
-                            2f,
-                            0
-                    )
-            ));
-            BDDMockito.given(gameRepository.findAllGamesByDateAndTeam(LocalDate.now(), LocalDate.now().plusDays(1), team)).willReturn(games);
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Game> games = new PageImpl<>(List.of(testGameInit.game1), pageable, 2);
+            BDDMockito.given(gameRepository.findAllGamesByDateAndTeam(pageable, LocalDate.now(), LocalDate.now().plusDays(1), team)).willReturn(games);
 
             // when
-            List<GameResponse> responses = gameService.getGamesByParam(LocalDate.now(), team);
+            GamePageResponse responses = gameService.getGamesByParam(LocalDate.now(), team, 0, 10);
 
             // then
-            Mockito.verify(gameRepository, Mockito.times(1)).findAllGamesByDateAndTeam(LocalDate.now(), LocalDate.now().plusDays(1), team);
-            assertEquals(1L, responses.get(0).teamHomeId());
+            Mockito.verify(gameRepository, Mockito.times(1)).findAllGamesByDateAndTeam(pageable, LocalDate.now(), LocalDate.now().plusDays(1), team);
+            assertEquals(1L, responses.content().get(0).teamHomeId());
         }
     }
 
@@ -163,15 +141,15 @@ class GameServiceImplTest {
                             2f
                     )
             ));
-            BDDMockito.given(teamRepository.findById(1L)).willReturn(Optional.of(testTeamInit.teamA));
-            BDDMockito.given(teamRepository.findById(2L)).willReturn(Optional.of(testTeamInit.teamB));
+            BDDMockito.given(teamService.findById(1L)).willReturn(testTeamInit.teamA);
+            BDDMockito.given(teamService.findById(2L)).willReturn(testTeamInit.teamB);
             BDDMockito.given(gameRepository.saveAll(any())).willReturn(null);
 
             // when
             gameService.insertGame(games);
 
             // then
-            Mockito.verify(teamRepository, Mockito.times(2)).findById(any());
+            Mockito.verify(teamService, Mockito.times(2)).findById(any());
             Mockito.verify(gameRepository, Mockito.times(1)).saveAll(any());
         }
 
@@ -188,13 +166,13 @@ class GameServiceImplTest {
                             2f
                     )
             ));
-            BDDMockito.given(teamRepository.findById(999L)).willThrow(NotFoundException.class);
+            BDDMockito.given(teamService.findById(999L)).willThrow(NotFoundException.class);
 
             // when
             assertThrows(NotFoundException.class, () -> gameService.insertGame(games));
 
             // then
-            Mockito.verify(teamRepository, Mockito.times(1)).findById(any());
+            Mockito.verify(teamService, Mockito.times(1)).findById(any());
             Mockito.verify(gameRepository, Mockito.times(0)).saveAll(any());
         }
     }
@@ -278,4 +256,5 @@ class GameServiceImplTest {
             Mockito.verify(gameRepository, Mockito.times(0)).delete(any());
         }
     }
+
 }
