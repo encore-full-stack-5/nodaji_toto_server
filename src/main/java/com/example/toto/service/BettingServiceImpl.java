@@ -5,18 +5,14 @@ import com.example.toto.domain.dto.request.GameUpdateRequest;
 import com.example.toto.domain.dto.response.BettingResponse;
 import com.example.toto.domain.entity.Betting;
 import com.example.toto.domain.entity.BettingGame;
-import com.example.toto.domain.entity.Game;
-import com.example.toto.domain.repository.BettingGameRepository;
 import com.example.toto.domain.repository.BettingRepository;
-import com.example.toto.domain.repository.GameRepository;
-import com.example.toto.exception.ExpiredBattingException;
 import com.example.toto.exception.NotFoundException;
+import com.example.toto.global.api.ApiPayment;
 import com.example.toto.utils.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,8 +20,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BettingServiceImpl implements BettingService{
     private final BettingRepository bettingRepository;
-    private final BettingGameRepository bettingGameRepository;
-    private final GameRepository gameRepository;
+    private final BettingGameService bettingGameService;
+    private final ApiPayment apiPayment;
     private final JwtUtils jwtUtils;
 
     @Override
@@ -37,14 +33,12 @@ public class BettingServiceImpl implements BettingService{
     @Override
     @Transactional
     public void insertBetting(String userIdToken, BettingRequest req) {
-        Betting betting = req.toEntity(UUID.fromString(jwtUtils.parseToken(userIdToken)));
+        UUID uuid = UUID.fromString(jwtUtils.parseToken(userIdToken));
+//        String status = apiPayment.payTotoByUser(uuid, req.pointAmount()).status();
+//        System.out.println(status);
+        Betting betting = req.toEntity(uuid);
         bettingRepository.save(betting);
-        bettingGameRepository.saveAll(req.bettingGames().stream()
-                .map(e -> {
-                    Game game = gameRepository.findById(e.gameId()).orElseThrow(() -> new NotFoundException("GAME"));
-                    if(game.getBetEndAt().isBefore(LocalDateTime.now())) throw new ExpiredBattingException();
-                    return e.toEntity(betting, game);
-                }).toList());
+        bettingGameService.saveAllByBetting(req.bettingGames(), betting);
     }
 
     @Override
@@ -57,18 +51,20 @@ public class BettingServiceImpl implements BettingService{
     @Override
     @Transactional
     public void updateBettingResult(GameUpdateRequest req) {
-        List<BettingGame> byGameId = bettingGameRepository.findAllByGame_GameId(req.gameId());
-        byGameId.forEach(betting -> {
-            Game game = gameRepository.findById(req.gameId()).orElseThrow(() -> new NotFoundException("GAME"));
-            betting.setBettingResult(game.getGameResult());
-            List<BettingGame> allByBettingId = bettingGameRepository.findAllByBettingId_BettingId(betting.getBettingId().getBettingId());
-            List<BettingGame> filterByResult = allByBettingId.stream().filter(
-                            bettingGame -> bettingGame.getResult().equals(2)).toList();
-            if(allByBettingId.size() == filterByResult.size()) {
-                Betting targetBetting = bettingRepository.findById(betting.getBettingId().getBettingId()).orElseThrow();
-                UUID userId = targetBetting.getUserId();
-                // 메일발송
-                // 정산
+        List<BettingGame> allBettingGamesByGame = bettingGameService.findAllByGameId(req.gameId());
+        allBettingGamesByGame.forEach(bettingGame -> {
+            bettingGame.setBettingResult(req.result());
+            List<BettingGame> allBettingGamesByBetting = bettingGameService.findAllByBettingId(bettingGame.getBettingId().getBettingId());
+            int filterResult = allBettingGamesByBetting.stream().filter(e -> e.getTeam().equals(e.getResult()) || e.getResult() > 2).toList().size();
+            if(allBettingGamesByBetting.size() == filterResult) {
+                float rtp = 1f;
+                for(BettingGame e : allBettingGamesByBetting) {
+                    if (e.getResult() == 1) rtp *= e.getGame().getRtpHome();
+                    else if(e.getResult() == 2) rtp *= e.getGame().getRtpAway();
+                }
+                //메일발송 및 상금 수령
+                UUID userId = bettingGame.getBettingId().getUserId();
+//                apiPayment.sendWinUser(userId, (int) Math.floor(bettingGame.getBettingId().getPointAmount() * rtp));
             }
         });
     }

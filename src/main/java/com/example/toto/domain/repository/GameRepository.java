@@ -1,6 +1,8 @@
 package com.example.toto.domain.repository;
 
 import com.example.toto.domain.entity.Game;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +19,8 @@ public interface GameRepository
             "GAME_START_AT >= DATE(:date) " +
             "AND " +
             "GAME_START_AT <= DATE(:datePlusOne)", nativeQuery = true)
-    List<Game> findAllGamesByDate(
+    Page<Game> findAllGamesByDate(
+            Pageable pageable,
             @Param("date") LocalDate date,
             @Param("datePlusOne") LocalDate datePlusOne);
 
@@ -30,7 +33,8 @@ public interface GameRepository
             "(TEAM_HOME = :teamId " +
             "OR " +
             "TEAM_AWAY = :teamId)", nativeQuery = true)
-    List<Game> findAllGamesByDateAndTeam(
+    Page<Game> findAllGamesByDateAndTeam(
+            Pageable pageable,
             @Param("date") LocalDate date,
             @Param("datePlusOne") LocalDate datePlusOne,
             @Param("teamId")Long teamId);

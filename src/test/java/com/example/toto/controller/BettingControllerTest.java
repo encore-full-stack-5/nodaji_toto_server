@@ -63,14 +63,13 @@ class BettingControllerTest {
                             "teamA",
                             "teamB",
                             1.5f,
-                            1L,
+                            1,
                             0
                     )
             ));
             List<BettingResponse> bettingResponses = new ArrayList<>(List.of(
                     new BettingResponse(
                             1L,
-                            userId,
                             10000,
                             LocalDateTime.of(2024,6,15,18,30),
                             bettingGameResponses
