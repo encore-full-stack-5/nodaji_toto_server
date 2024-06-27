@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.*;
 public class TotoController {
     @GetMapping("/version")
     public String getVersion() {
-        return "v0.1";
+        return "v0.2";
     }
 }
