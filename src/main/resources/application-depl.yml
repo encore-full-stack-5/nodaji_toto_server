@@ -1,0 +1,22 @@
+server:
+  port: ${serverPort}
+spring:
+  application:
+    name: toto
+  datasource:
+    url: jdbc:mysql://${dbServer}/nodagi_toto?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    username: ${dbUsername}
+    password: ${dbPassword}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: ${kafkaServer} # 192.168.0.20:9092
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+token:
+  secret: ${secretKey}
+address:
+  payment: ${payServer}
+  front: ${frontServer}
