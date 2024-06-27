@@ -1,50 +1,108 @@
 package com.example.toto.controller;
 
+import com.example.toto.domain.dto.request.GameRequest;
+import com.example.toto.domain.dto.request.GameUpdateRequest;
+import com.example.toto.domain.entity.Game;
+import com.example.toto.domain.repository.GameRepository;
+import com.example.toto.global.api.ApiPayment;
 import com.example.toto.global.api.FeignPayment;
+import com.example.toto.global.dto.request.EmailRequest;
 import com.example.toto.global.dto.request.UserPaymentRequest;
 import com.example.toto.global.dto.request.UserWinRequest;
 import com.example.toto.global.dto.response.UserPaymentResponse;
 import com.example.toto.global.dto.response.UserPointResponse;
+import com.example.toto.global.kafka.MailProducer;
+import com.example.toto.service.BettingService;
+import com.example.toto.service.GameService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/v1/toto")
 @RequiredArgsConstructor
 public class DevTestController {
-    private final FeignPayment feignPayment;
+    private final ApiPayment apiPayment;
+    private final BettingService bettingService;
+    private final GameService gameService;
+    private final GameRepository gameRepository;
+    private final MailProducer mailProducer;
 
     @GetMapping("/token")
     public String getToken() {
         return Jwts.builder()
                 .subject("00000000-0000-0000-0000-000000000000")
-                .expiration(new Date(System.currentTimeMillis() + 3600000))
+                .expiration(new Date(System.currentTimeMillis() + 36000000))
                 .signWith(Keys.hmacShaKeyFor("SecretKeyHereSecretKeyHereSecretKeyHereSecretKeyHere".getBytes()))
                 .compact();
     }
 
-    @GetMapping("/accounts/{userId}")
-    public UserPointResponse apiTest1(@PathVariable String userId) {
-        return feignPayment.getPointByUserId(userId);
+    @PutMapping("/set-result")
+    public void setResultGame(@RequestBody GameUpdateRequest request) {
+        gameService.updateGameResult(List.of(request));
+        bettingService.updateBettingResult(request);
     }
 
-    @PostMapping("/payments/{userId}")
-    public UserPaymentResponse apiTest2(
-            @PathVariable String userId,
-            @RequestBody UserPaymentRequest req
-    ) {
-        return feignPayment.payTotoByUser(userId, req);
+    @PostMapping("/mail")
+    public void sendMail(@RequestBody EmailRequest req) {
+        mailProducer.send(req);
     }
 
-    @PostMapping("/win/{userId}")
-    public void apiTest2(
-            @PathVariable String userId,
-            @RequestBody UserWinRequest req
-    ) {
-        feignPayment.sendWinUser(userId, req);
+    @GetMapping("/pay")
+    public UserPointResponse getPay(@RequestParam(name = "userId") String userId) {
+        return apiPayment.getPointByUserId(userId);
+    }
+
+    // test simulation method
+    @GetMapping("/set1")
+//    @Scheduled(cron = "0 0/2 * * * *")
+    public void createGames() {
+        int teamNum = 14;
+        Random rand = new Random();
+        List<GameRequest> gameList = new ArrayList<>();
+        Map<Integer, Integer> teamOrder = new HashMap<>();
+        while(teamOrder.size() < teamNum) {
+            teamOrder.putIfAbsent(rand.nextInt(teamNum), teamOrder.size()+1);
+        }
+
+        for (int i=0; i<teamNum/2; i++) {
+            float rtp = rand.nextFloat(0.8f)+0.1f;
+            gameList.add(new GameRequest(
+                    LocalDateTime.now().withSecond(0).withNano(0).plusMinutes(2),
+                    LocalDateTime.now().withSecond(0).withNano(0).plusMinutes(1),
+                    (long) teamOrder.get(i*2),
+                    (long) teamOrder.get(i*2+1),
+                    (float) Math.ceil(Math.pow((rtp * 1.6), 3) * 100) / 100 + 1,
+                    (float) Math.ceil(Math.pow(((1-rtp) * 1.6), 3) * 100) / 100 + 1
+            ));
+        }
+
+        gameService.insertGame(gameList);
+    }
+
+    // test simulation method
+    @GetMapping("/set2")
+//    @Scheduled(cron = "0 0/2 * * * *")
+    public void resultGames() {
+        List<Game> allGamesByResult = gameRepository.findAllGamesByGameResultAndGameStartAtBefore(0, LocalDateTime.now());
+        allGamesByResult.forEach(e -> {
+                    double rand = new Random().nextDouble(1.1);
+                    int result; // 1:홈팀승, 2:원정팀승, 3:무승부, 4:경기취소
+                    if(rand > 1.07) {
+                        result = 4;
+                    } else if(rand > 1) {
+                        result = 3;
+                    } else {
+                        result = Math.cbrt(e.getRtpHome() - 1) / 1.6 < rand ? 1 : 2;
+                    }
+                    GameUpdateRequest gameUpdateRequest = new GameUpdateRequest(e.getGameId(), result);
+                    gameService.updateGameResult(List.of(gameUpdateRequest));
+                    bettingService.updateBettingResult(gameUpdateRequest);
+                }
+        );
     }
 }
