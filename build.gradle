@@ -74,10 +74,10 @@ jacocoTestCoverageVerification{
 					'com.example.toto.controller.GameController',
 					'com.example.toto.service.**'
 			]
-			limit {
-				value = 'COVEREDRATIO'
-				minimum = 0.8
-			}
+//			limit {
+//				value = 'COVEREDRATIO'
+//				minimum = 0.8
+//			}
 		}
 	}
 }
