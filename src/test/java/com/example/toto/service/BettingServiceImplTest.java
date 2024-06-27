@@ -70,7 +70,7 @@ class BettingServiceImplTest {
             Mockito.verify(bettingRepository, Mockito.times(1)).findAllByUserId(userId);
             assertEquals(10000, response.get(0).pointAmount());
             assertEquals(1, response.get(0).bettingGames().get(0).team());
-            assertEquals(4, response.get(0).bettingGames().get(1).team());
+            assertEquals(2, response.get(0).bettingGames().get(1).team());
         }
 
         @Test
