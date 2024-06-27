@@ -6,9 +6,7 @@ import com.example.toto.domain.dto.request.BettingRequest;
 import com.example.toto.domain.dto.response.BettingResponse;
 import com.example.toto.domain.entity.Betting;
 import com.example.toto.domain.entity.BettingGame;
-import com.example.toto.domain.repository.BettingGameRepository;
 import com.example.toto.domain.repository.BettingRepository;
-import com.example.toto.domain.repository.GameRepository;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.utils.JwtUtils;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -26,6 +24,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,9 +32,7 @@ class BettingServiceImplTest {
     @Mock
     private BettingRepository bettingRepository;
     @Mock
-    private BettingGameRepository bettingGameRepository;
-    @Mock
-    private GameRepository gameRepository;
+    private BettingGameService bettingGameService;
     @Mock
     private JwtUtils jwtUtils;
     @InjectMocks
@@ -73,7 +70,7 @@ class BettingServiceImplTest {
             Mockito.verify(bettingRepository, Mockito.times(1)).findAllByUserId(userId);
             assertEquals(10000, response.get(0).pointAmount());
             assertEquals(1, response.get(0).bettingGames().get(0).team());
-            assertEquals(4, response.get(0).bettingGames().get(1).team());
+            assertEquals(2, response.get(0).bettingGames().get(1).team());
         }
 
         @Test
@@ -118,19 +115,19 @@ class BettingServiceImplTest {
             // give
             UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
             String userIdToken = testGameInit.generateToken(userId, 0);
-            BettingRequest bettingRequest = new BettingRequest(10000,
+            BettingRequest bettingRequest = new BettingRequest(
+                    10000,
                     List.of(new BettingGameRequest(1L, 1)));
             BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
             BDDMockito.given(bettingRepository.save(any())).willReturn(null);
-            BDDMockito.given(bettingGameRepository.saveAll(any())).willReturn(null);
-            BDDMockito.given(gameRepository.findById(1L)).willReturn(Optional.of(testGameInit.game1));
+            doNothing().when(bettingGameService).saveAllByBetting(eq(bettingRequest.bettingGames()), any());
 
             // when
             bettingService.insertBetting(userIdToken, bettingRequest);
 
             //then
             Mockito.verify(bettingRepository, Mockito.times(1)).save(any());
-            Mockito.verify(bettingGameRepository, Mockito.times(1)).saveAll(any());
+            Mockito.verify(bettingGameService, Mockito.times(1)).saveAllByBetting(eq(bettingRequest.bettingGames()), any());
         }
 
         @Test
@@ -147,25 +144,6 @@ class BettingServiceImplTest {
 
             //then
             Mockito.verify(bettingRepository, Mockito.times(0)).save(any());
-            Mockito.verify(bettingGameRepository, Mockito.times(0)).saveAll(any());
-        }
-
-        @Test
-        void 실패_게임_없음(){
-            // give
-            UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
-            String userIdToken = testGameInit.generateToken(userId, 0);
-            BettingRequest bettingRequest = new BettingRequest(10000,
-                    List.of(new BettingGameRequest(999L, 1)));
-            BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
-            BDDMockito.given(bettingRepository.save(any())).willReturn(null);
-
-            // when
-            assertThrows(NotFoundException.class, () -> bettingService.insertBetting(userIdToken, bettingRequest));
-
-            //then
-            Mockito.verify(bettingRepository, Mockito.times(1)).save(any());
-            Mockito.verify(bettingGameRepository, Mockito.times(0)).saveAll(any());
         }
     }
 

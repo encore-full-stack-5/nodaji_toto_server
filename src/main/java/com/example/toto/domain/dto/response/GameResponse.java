@@ -10,6 +10,8 @@ public record GameResponse (
     LocalDateTime betEndAt,
     Long teamHomeId,
     Long teamAwayId,
+    String teamHome,
+    String teamAway,
     Float rtpHome,
     Float rtpAway,
     Integer result
@@ -21,8 +23,10 @@ public record GameResponse (
                 game.getBetEndAt(),
                 game.getTeamHome().getTeamId(),
                 game.getTeamAway().getTeamId(),
+                game.getTeamHome().getTeamName(),
+                game.getTeamAway().getTeamName(),
                 game.getRtpHome(),
-                game.getRtpHome(),
+                game.getRtpAway(),
                 game.getGameResult()
         );
     }

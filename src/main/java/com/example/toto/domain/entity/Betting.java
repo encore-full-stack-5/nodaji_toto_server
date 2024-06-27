@@ -31,6 +31,6 @@ public class Betting {
     @Column(name = "BETTING_CREATED_AT", nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "bettingGameId", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "bettingId", cascade = CascadeType.REMOVE)
     private List<BettingGame> bettingGames;
 }

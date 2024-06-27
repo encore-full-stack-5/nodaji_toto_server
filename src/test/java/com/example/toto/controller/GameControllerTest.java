@@ -1,8 +1,8 @@
 package com.example.toto.controller;
 
+import com.example.toto.TestGameResInit;
 import com.example.toto.domain.dto.request.GameRequest;
 import com.example.toto.domain.dto.request.GameUpdateRequest;
-import com.example.toto.domain.dto.response.GameResponse;
 import com.example.toto.exception.InvalidValueException;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.service.GameService;
@@ -37,102 +37,58 @@ class GameControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    protected final TestGameResInit testGameResInit;
+    GameControllerTest() {
+        testGameResInit = new TestGameResInit();
+    }
+
     @Nested
     class getGames {
         @Test
         void 성공_파라미터_모두_있음() throws Exception {
             LocalDate date = LocalDate.of(2024, 6, 15);
             Long team = 1L;
-            BDDMockito.given(gameService.getGamesByParam(date, team)).willReturn(
-                    List.of(
-                            new GameResponse(
-                                    1L,
-                                    LocalDateTime.of(2024,6,15,18,30),
-                                    LocalDateTime.of(2024,6,15,18,20),
-                                    1L,
-                                    2L,
-                                    1.5f,
-                                    2f,
-                                    0
-                            )
-                    )
-            );
+            BDDMockito.given(gameService.getGamesByParam(date, team, 0, 10))
+                    .willReturn(testGameResInit.gamePageRes);
 
             mvc.perform(get("/api/v1/toto/games?date=" + date + "&team=" + team))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].gameId").value(1))
+                    .andExpect(jsonPath("$.content[0].gameId").value(1))
                     .andDo(MockMvcResultHandlers.print());
         }
 
         @Test
         void 성공_파라미터_날짜_없음() throws Exception {
             Long team = 1L;
-            BDDMockito.given(gameService.getGamesByParam(LocalDate.now(), team)).willReturn(
-                    List.of(
-                            new GameResponse(
-                                    1L,
-                                    LocalDateTime.of(2024,6,15,18,30),
-                                    LocalDateTime.of(2024,6,15,18,20),
-                                    1L,
-                                    2L,
-                                    1.5f,
-                                    2f,
-                                    0
-                            )
-                    )
-            );
+            BDDMockito.given(gameService.getGamesByParam(LocalDate.now(), team, 0, 10))
+                    .willReturn(testGameResInit.gamePageRes);
 
             mvc.perform(get("/api/v1/toto/games?team=" + team))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].gameId").value(1))
+                    .andExpect(jsonPath("$.content[0].gameId").value(1))
                     .andDo(MockMvcResultHandlers.print());
         }
 
         @Test
         void 성공_파라미터_팀_없음() throws Exception {
             LocalDate date = LocalDate.of(2024, 6, 15);
-            Long team = 1L;
-            BDDMockito.given(gameService.getGamesByParam(date, null)).willReturn(
-                    List.of(
-                            new GameResponse(
-                                    1L,
-                                    LocalDateTime.of(2024,6,15,18,30),
-                                    LocalDateTime.of(2024,6,15,18,20),
-                                    1L,
-                                    2L,
-                                    1.5f,
-                                    2f,
-                                    0
-                            )
-                    )
-            );
+            BDDMockito.given(gameService.getGamesByParam(date, null, 0, 10))
+                    .willReturn(testGameResInit.gamePageRes);
 
             mvc.perform(get("/api/v1/toto/games?date=" + date))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].gameId").value(1))
+                    .andExpect(jsonPath("$.content[0].gameId").value(1))
                     .andDo(MockMvcResultHandlers.print());
         }
 
         @Test
         void 성공_파라미터_모두_없음() throws Exception {
-            BDDMockito.given(gameService.getGamesByParam(LocalDate.now(), null)).willReturn(
-                    List.of(
-                            new GameResponse(
-                                    1L,
-                                    LocalDateTime.of(2024,6,15,18,30),
-                                    LocalDateTime.of(2024,6,15,18,20),
-                                    1L,
-                                    2L,
-                                    1.5f,
-                                    2f,
-                                    0
-                            )
-                    )
-            );
+            BDDMockito.given(gameService.getGamesByParam(LocalDate.now(), null, 0, 10))
+                    .willReturn(testGameResInit.gamePageRes);
 
             mvc.perform(get("/api/v1/toto/games"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].gameId").value(1))
+                    .andExpect(jsonPath("$.content[0].gameId").value(1))
                     .andDo(MockMvcResultHandlers.print());
         }
     }
