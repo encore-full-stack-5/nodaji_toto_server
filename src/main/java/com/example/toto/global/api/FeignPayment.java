@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@FeignClient(name = "PaymentApi", url = "http://192.168.0.10:8083")
+@FeignClient(name = "PaymentApi", url = "http://192.168.0.10:8084")
 public interface FeignPayment {
 
     @GetMapping("/api/v1/accounts/{userId}")
@@ -21,9 +21,6 @@ public interface FeignPayment {
             @RequestBody UserPaymentRequest req
     );
 
-    @PostMapping("/api/v1/win/toto/{userId}")
-    void sendWinUser(
-            @PathVariable("userId") UUID userId,
-            @RequestBody UserWinRequest req
-    );
+    @PostMapping("/api/v1/toto")
+    void sendWinUser(@RequestBody UserWinRequest req);
 }
