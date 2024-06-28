@@ -14,7 +14,7 @@ import java.util.UUID;
 public class ApiPayment {
     private final FeignPayment feignPayment;
 
-    public UserPointResponse getPointByUserId(String userId) {
+    public UserPointResponse getPointByUserId(UUID userId) {
         return feignPayment.getPointByUserId(userId);
     }
 
