@@ -4,7 +4,6 @@ import com.example.toto.global.dto.request.UserPaymentRequest;
 import com.example.toto.global.dto.request.UserWinRequest;
 import com.example.toto.global.dto.response.UserPaymentResponse;
 import com.example.toto.global.dto.response.UserPointResponse;
-import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
