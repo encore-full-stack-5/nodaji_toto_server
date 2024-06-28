@@ -23,6 +23,6 @@ public class ApiPayment {
     }
 
     public void sendWinUser(UUID userId, Integer amount) {
-        feignPayment.sendWinUser(userId, UserWinRequest.from(amount));
+        feignPayment.sendWinUser(UserWinRequest.from(userId, amount));
     }
 }
