@@ -3,6 +3,7 @@ package com.example.toto.controller;
 import com.example.toto.exception.ExpiredBattingException;
 import com.example.toto.exception.InvalidValueException;
 import com.example.toto.exception.NotFoundException;
+import feign.FeignException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
@@ -42,4 +43,11 @@ public class ExceptionController {
     public String expiredBattingException() {
         return "EXPIRED BETTING";
     }
+
+    @ExceptionHandler(FeignException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String feignException(FeignException e) {
+        return e.getMessage();
+    }
+
 }
