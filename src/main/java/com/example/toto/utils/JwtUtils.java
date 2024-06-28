@@ -25,7 +25,7 @@ public class JwtUtils {
         Claims payload = (Claims) Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
-                .parse(token)
+                .parse(checkedToken)
                 .getPayload();
         return payload.getSubject();
     }
