@@ -1,8 +1,8 @@
 package com.example.toto.utils;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -15,8 +15,9 @@ public class JwtUtils {
 
     public String validationToken(String token) {
         String[] tokenSplit = token.split(" ");
-        if(tokenSplit.length != 2) throw new JwtException("IS NOT BEARER TOKEN");
-        if(tokenSplit[1].split("\\.").length != 3) throw  new JwtException("IS NOT VALID TOKEN");
+        if(tokenSplit.length != 2) throw new DecodingException("FORMAT IS NOT CORRECT");
+        if(!tokenSplit[0].equals("Bearer")) throw new DecodingException("IS NOT BEARER TOKEN");
+        if(tokenSplit[1].split("\\.").length != 3) throw  new DecodingException("IS NOT VALID TOKEN");
         return tokenSplit[1];
     }
 
