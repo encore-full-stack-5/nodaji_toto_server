@@ -28,7 +28,7 @@ public class JwtUtils {
                 .build()
                 .parse(checkedToken)
                 .getPayload();
-        return payload.getSubject();
+        return payload.get("id").toString();
     }
 
     public JwtUtils(@Value("${token.secret}") String secret) {
