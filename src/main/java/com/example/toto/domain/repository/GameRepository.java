@@ -14,25 +14,25 @@ import java.util.List;
 public interface GameRepository
         extends JpaRepository<Game, Long> {
 
-    @Query(value = "SELECT * FROM GAMES " +
+    @Query(value = "SELECT * FROM games " +
             "WHERE " +
-            "GAME_START_AT >= DATE(:date) " +
+            "game_start_at >= DATE(:date) " +
             "AND " +
-            "GAME_START_AT <= DATE(:datePlusOne)", nativeQuery = true)
+            "game_start_at <= DATE(:datePlusOne)", nativeQuery = true)
     Page<Game> findAllGamesByDate(
             Pageable pageable,
             @Param("date") LocalDate date,
             @Param("datePlusOne") LocalDate datePlusOne);
 
-    @Query(value = "SELECT * FROM GAMES " +
+    @Query(value = "SELECT * FROM games " +
             "WHERE " +
-            "GAME_START_AT >= DATE(:date) " +
+            "game_start_at >= DATE(:date) " +
             "AND " +
-            "GAME_START_AT <= DATE(:datePlusOne) " +
+            "game_start_at <= DATE(:datePlusOne) " +
             "AND " +
-            "(TEAM_HOME = :teamId " +
+            "(team_home = :teamId " +
             "OR " +
-            "TEAM_AWAY = :teamId)", nativeQuery = true)
+            "team_away = :teamId)", nativeQuery = true)
     Page<Game> findAllGamesByDateAndTeam(
             Pageable pageable,
             @Param("date") LocalDate date,
