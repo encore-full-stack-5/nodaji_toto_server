@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Builder
-@Table(name = "BETTINGS")
+@Table(name = "bettings")
 public class Betting {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "BETTING_ID")
