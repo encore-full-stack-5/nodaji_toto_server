@@ -8,6 +8,8 @@ import com.example.toto.domain.entity.BettingGame;
 import com.example.toto.domain.repository.BettingRepository;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.global.api.ApiPayment;
+import com.example.toto.global.dto.request.EmailRequest;
+import com.example.toto.global.kafka.MailProducer;
 import com.example.toto.utils.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class BettingServiceImpl implements BettingService{
     private final BettingRepository bettingRepository;
     private final BettingGameService bettingGameService;
     private final ApiPayment apiPayment;
+    private final MailProducer mailProducer;
     private final JwtUtils jwtUtils;
 
     @Override
@@ -64,7 +67,8 @@ public class BettingServiceImpl implements BettingService{
                 }
                 //메일발송 및 상금 수령
                 UUID userId = bettingGame.getBettingId().getUserId();
-//                apiPayment.sendWinUser(userId, (int) Math.floor(bettingGame.getBettingId().getPointAmount() * rtp));
+                apiPayment.sendWinUser(userId, (int) Math.floor(bettingGame.getBettingId().getPointAmount() * rtp));
+                mailProducer.send(EmailRequest.byUserId(userId));
             }
         });
     }
