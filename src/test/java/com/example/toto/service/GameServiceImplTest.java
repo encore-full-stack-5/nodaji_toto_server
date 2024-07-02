@@ -10,7 +10,7 @@ import com.example.toto.domain.entity.Game;
 import com.example.toto.domain.repository.GameRepository;
 import com.example.toto.exception.InvalidValueException;
 import com.example.toto.exception.NotFoundException;
-import com.example.toto.utils.ResultValidationUtils;
+import com.example.toto.global.utils.ResultValidationUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

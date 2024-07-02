@@ -6,8 +6,9 @@ import com.example.toto.domain.dto.request.BettingRequest;
 import com.example.toto.domain.dto.response.BettingGameResponse;
 import com.example.toto.domain.dto.response.BettingResponse;
 import com.example.toto.exception.NotFoundException;
+import com.example.toto.global.dto.TokenInfo;
 import com.example.toto.service.BettingService;
-import com.example.toto.utils.JwtUtils;
+import com.example.toto.global.utils.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.jupiter.api.Nested;
@@ -54,8 +55,9 @@ class BettingControllerTest {
         @Test
         void 성공_조회됨() throws Exception {
             UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
+            TokenInfo tokenInfo = new TokenInfo(userId, "", "");
             String userIdToken = testGameInit.generateToken(userId, 1000);
-            BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
+            BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(tokenInfo);
             List<BettingGameResponse> bettingGameResponses = new ArrayList<>(List.of(
                     new BettingGameResponse(
                             1L,
