@@ -9,5 +9,5 @@ ENV kafkaServer=kafka:9902
 ENV payServer=localhost:8080
 ENV frontServer=localhost:5173
 ENV secretKey=SecretKeyHereSecretKeyHereSecretKeyHereSecretKeyHere
-CMD ["java", "-jar", "-Dspring.profiles.active=${profiles}", "app.jar"]
+CMD ["java", "-jar", "-Dspring.profiles.active=${profiles}", "-Duser.timezone=Asia/Seoul", "app.jar"]
 EXPOSE ${serverPort}
