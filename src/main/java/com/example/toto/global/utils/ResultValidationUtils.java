@@ -1,4 +1,4 @@
-package com.example.toto.utils;
+package com.example.toto.global.utils;
 
 import com.example.toto.exception.InvalidValueException;
 import org.springframework.stereotype.Component;

@@ -8,7 +8,8 @@ import com.example.toto.domain.entity.Betting;
 import com.example.toto.domain.entity.BettingGame;
 import com.example.toto.domain.repository.BettingRepository;
 import com.example.toto.exception.NotFoundException;
-import com.example.toto.utils.JwtUtils;
+import com.example.toto.global.dto.TokenInfo;
+import com.example.toto.global.utils.JwtUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -49,8 +50,9 @@ class BettingServiceImplTest {
         void 성공_조회됨() {
             // give
             UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
+            TokenInfo tokenInfo = new TokenInfo(userId, "", "");
             String userIdToken = testGameInit.generateToken(userId, 1000);
-            BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
+            BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(tokenInfo);
 
             List<BettingGame> bettingGames = new ArrayList<>(List.of(
                     new BettingGame(1L, null, testGameInit.game1, 1, 0),
@@ -75,21 +77,22 @@ class BettingServiceImplTest {
 
         @Test
         void 성공_배팅_없음() {
-                // give
-                UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
-                String userIdToken = testGameInit.generateToken(userId, 1000);
-                BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
-                BDDMockito.given(bettingRepository.findAllByUserId(userId)).willReturn(new ArrayList<>());
+            // give
+            UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
+            TokenInfo tokenInfo = new TokenInfo(userId, "", "");
+            String userIdToken = testGameInit.generateToken(userId, 1000);
+            BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(tokenInfo);
+            BDDMockito.given(bettingRepository.findAllByUserId(userId)).willReturn(new ArrayList<>());
 
 
-                // when
-                List<BettingResponse> response = bettingService.findBettingsByUserId(userIdToken);
+            // when
+            List<BettingResponse> response = bettingService.findBettingsByUserId(userIdToken);
 
 
-                //then
-                Mockito.verify(bettingRepository, Mockito.times(1)).findAllByUserId(userId);
-                assertTrue(response.isEmpty());
-            }
+            //then
+            Mockito.verify(bettingRepository, Mockito.times(1)).findAllByUserId(userId);
+            assertTrue(response.isEmpty());
+        }
 
         @Test
         void 실패_토큰_만료(){
@@ -114,11 +117,12 @@ class BettingServiceImplTest {
         void 성공_추가됨(){
             // give
             UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
+            TokenInfo tokenInfo = new TokenInfo(userId, "", "");
             String userIdToken = testGameInit.generateToken(userId, 0);
             BettingRequest bettingRequest = new BettingRequest(
                     10000,
                     List.of(new BettingGameRequest(1L, 1)));
-            BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(userId.toString());
+            BDDMockito.given(jwtUtils.parseToken(userIdToken)).willReturn(tokenInfo);
             BDDMockito.given(bettingRepository.save(any())).willReturn(null);
             doNothing().when(bettingGameService).saveAllByBetting(eq(bettingRequest.bettingGames()), any());
 

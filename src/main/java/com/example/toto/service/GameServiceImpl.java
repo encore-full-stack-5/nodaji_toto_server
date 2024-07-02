@@ -9,7 +9,7 @@ import com.example.toto.domain.entity.Game;
 import com.example.toto.domain.entity.Team;
 import com.example.toto.domain.repository.GameRepository;
 import com.example.toto.exception.NotFoundException;
-import com.example.toto.utils.ResultValidationUtils;
+import com.example.toto.global.utils.ResultValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
