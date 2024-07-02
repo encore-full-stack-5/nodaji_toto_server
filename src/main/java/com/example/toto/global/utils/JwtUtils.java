@@ -1,5 +1,6 @@
-package com.example.toto.utils;
+package com.example.toto.global.utils;
 
+import com.example.toto.global.dto.TokenInfo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.DecodingException;
@@ -21,14 +22,14 @@ public class JwtUtils {
         return tokenSplit[1];
     }
 
-    public String parseToken(String token) {
+    public TokenInfo parseToken(String token) {
         String checkedToken = validationToken(token);
         Claims payload = (Claims) Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
                 .parse(checkedToken)
                 .getPayload();
-        return payload.get("id").toString();
+        return TokenInfo.from(payload);
     }
 
     public JwtUtils(@Value("${token.secret}") String secret) {

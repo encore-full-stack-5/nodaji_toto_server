@@ -8,9 +8,10 @@ import com.example.toto.domain.entity.BettingGame;
 import com.example.toto.domain.repository.BettingRepository;
 import com.example.toto.exception.NotFoundException;
 import com.example.toto.global.api.ApiPayment;
+import com.example.toto.global.dto.TokenInfo;
 import com.example.toto.global.dto.request.EmailRequest;
 import com.example.toto.global.kafka.MailProducer;
-import com.example.toto.utils.JwtUtils;
+import com.example.toto.global.utils.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,17 +30,16 @@ public class BettingServiceImpl implements BettingService{
 
     @Override
     public List<BettingResponse> findBettingsByUserId(String userIdToken) {
-        UUID userId = UUID.fromString(jwtUtils.parseToken(userIdToken));
-        return bettingRepository.findAllByUserId(userId).stream().map(BettingResponse::from).toList();
+        TokenInfo parseToken = jwtUtils.parseToken(userIdToken);
+        return bettingRepository.findAllByUserId(parseToken.userId()).stream().map(BettingResponse::from).toList();
     }
 
     @Override
     @Transactional
     public void insertBetting(String userIdToken, BettingRequest req) {
-        UUID uuid = UUID.fromString(jwtUtils.parseToken(userIdToken));
-//        String status = apiPayment.payTotoByUser(uuid, req.pointAmount()).status();
-//        System.out.println(status);
-        Betting betting = req.toEntity(uuid);
+        TokenInfo parseToken = jwtUtils.parseToken(userIdToken);
+        String status = apiPayment.payTotoByUser(parseToken.userId(), req.pointAmount()).status();
+        Betting betting = req.toEntity(parseToken.userId());
         bettingRepository.save(betting);
         bettingGameService.saveAllByBetting(req.bettingGames(), betting);
     }
