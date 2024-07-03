@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@FeignClient(name = "PaymentApi", url = "http://192.168.0.10:8084")
+
+@FeignClient(name = "PaymentApi", url = "34.46.237.231:30421")
 public interface FeignPayment {
 
     @GetMapping("/api/v1/accounts/{userId}")
