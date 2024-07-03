@@ -11,7 +11,7 @@ public record TokenInfo(
 ) {
     public static TokenInfo from(Claims claims){
         return new TokenInfo(
-                claims.get("id", UUID.class),
+                UUID.fromString(claims.get("id", String.class)),
                 claims.get("name", String.class),
                 claims.get("email", String.class)
         );
